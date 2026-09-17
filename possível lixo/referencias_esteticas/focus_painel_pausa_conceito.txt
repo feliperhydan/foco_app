@@ -1,0 +1,274 @@
+--- PAGE 1 ---
+FOCUS
+EXTENSÃO DE IDENTIDADE VISUAL
+PAINEL DE PAUSA — V1
+SISTEMA DE SUGESTÃO DE PAUSA
+A pausa também
+é medida.
+Documento de conceito — anatomia, hierarquia tipográfica, progressão de legendas e catálogo de
+animações para o painel exibido durante os ciclos de descanso do FOCUS.
+01 / 12
+
+--- PAGE 2 ---
+01 — FUNDAMENTO
+FOCUS
+/ PAINEL DE PAUSA
+01
+POR QUE ESTE PAINEL EXISTE
+Um instrumento também descansa
+O FOCUS mede esforço com precisão silenciosa — mas
+esforço sem recuperação é apenas desgaste disfarçado
+de produtividade. O painel de pausa existe para que o
+intervalo entre ciclos seja tão intencional quanto o próprio
+ciclo de foco: uma instrução curta, direta, no imperativo, que
+o usuário decide seguir ou não.
+Ele não é um pop-up de aviso nem um mini-jogo de
+recompensa. É a mesma voz do instrumento — agora
+falando sobre o corpo, não sobre o número.
+UMA CAMADA DELIBERADAMENTE SEPARADA
+01
+Fora da identidade principal. O restante do FOCUS proíbe
+pixel art, dithering e nostalgia ornamental — este painel é a
+única exceção consciente do sistema.
+02
+Mensagem primeiro, ilustração depois. O comando em
+texto domina a composição; a animação acompanha,
+nunca protagoniza.
+03
+Nunca esconde o cronômetro. O painel sobrepõe o
+conteúdo do dashboard, mas o cronômetro da pausa e
+seu botão de encerrar permanecem sempre visíveis
+abaixo dele.
+FOCUS — PAINEL DE PAUSA
+02 / 12
+
+--- PAGE 3 ---
+02 — DIRETRIZES
+FOCUS
+/ PAINEL DE PAUSA
+02
+REGRAS DESTE COMPONENTE
+Princípios específicos
+01
+Imperativo, sempre. Toda mensagem é um comando
+curto em português — "Alongue-se", "Beba água" — nunca
+uma pergunta ou sugestão condicional.
+02
+Escala grande, sem invadir. O card ocupa a maior área
+possível da tela sem tocar a faixa inferior onde vivem o
+cronômetro e o botão de encerrar pausa.
+03
+Serifa itálica para o comando. A mensagem usa Lora, o
+mesmo tipo dos números protagonistas — reforçando que
+isto também é parte do instrumento, não um alerta de
+sistema.
+04
+Legenda contextual, nunca decorativa. O rodapé do
+painel sempre informa em que ciclo o usuário está e o que
+esse ciclo representa nas metas do dia.
+05
+Conclusão nunca é fricção. Um único botão fecha o painel
+— "Concluir" — sem exigir confirmação, formulário ou
+justificativa.
+06
+Seis variações, um só tom. Diferentes corpos e cenários
+(alongar, água, caminhar, contato, respirar, olhar a janela)
+— mas a mesma cadência curta e direta.
+FOCUS — PAINEL DE PAUSA
+03 / 12
+
+--- PAGE 4 ---
+03 — LAYOUT
+FOCUS
+/ PAINEL DE PAUSA
+03
+ONDE O PAINEL VIVE NA TELA
+Anatomia do overlay
+A REGRA DE OURO
+O painel se ancora no topo da área de
+conteúdo e se estende horizontalmente até
+quase as bordas — grande o suficiente para
+dominar a atenção. Uma faixa inferior fixa,
+reservada ao cronômetro e ao botão de
+encerrar pausa, nunca é coberta.
+A barra lateral de navegação também
+permanece visível e clicável: o usuário pode sair
+do modo de pausa a qualquer momento sem
+depender do painel.
+Referência de posição — não é a composição final de pixels,
+apenas a relação de espaço entre painel, cronômetro e
+sidebar.
+Alongue-se
+Fim do ciclo 4 de foco · 3 ciclos do mínimo
+Z ON A PROTEGIDA
+19:55
+ENCERRAR PAUSA
+FOCUS — PAINEL DE PAUSA
+04 / 12
+
+--- PAGE 5 ---
+04 — TIPOGRAFIA
+FOCUS
+/ PAINEL DE PAUSA
+04
+O QUE O OLHO LÊ PRIMEIRO
+Hierarquia dentro do card
+COMANDO
+Alongue-se
+LEGENDA DE CICLO
+Fim do ciclo 4 de foco · 3 ciclos do mínimo
+BOTÃO DE AÇÃO
+CONCLUIR
+O comando usa Lora 600 em itálico — a única aparição de itálico em todo o sistema FOCUS, reservada propositalmente a este
+contexto de convite, não de medição. A legenda usa a mesma família em peso regular, tom secundário, discreta como
+qualquer legenda de barra de progresso. O botão herda o verde primário e a sombra sólida deslocada já usada nas barras
+rústicas — o único ponto de contato visual entre esta camada e a identidade principal.
+FOCUS — PAINEL DE PAUSA
+05 / 12
+
+--- PAGE 6 ---
+05 — COMPORTAMENTO
+FOCUS
+/ PAINEL DE PAUSA
+05
+A LEGENDA MUDA DE VOCABULÁRIO
+Progressão da legenda de ciclo
+ANTES DO MÍNIMO
+Alongue-se
+Fim do ciclo 4 de foco · 3 ciclos do
+mínimo
+ACUMULANDO RUMO AO MÍNIMO →
+MÍNIMO CUMPRIDO, RUMO AO IDEAL
+Beba água
+Fim do ciclo 7 de foco · 2 ciclos do ideal
+VOCABULÁRIO TROCA DE "MÍNIMO" PARA
+"IDEAL" →
+IDEAL JÁ CONCLUÍDO
+Respire fundo
+Fim do ciclo 10 de foco · +2 ciclos do
+ideal
+O "+" MARCA ESFORÇO EXTRAORDINÁRIO
+FOCUS — PAINEL DE PAUSA
+06 / 12
+
+--- PAGE 7 ---
+06 — CATÁLOGO
+FOCUS
+/ PAINEL DE PAUSA
+06
+SEIS COMANDOS, SEIS CENAS
+Catálogo de animações
+Alongue-se
+QUADRO DE REFERÊNCIA — GATO SE ESPREGUIÇANDO
+Respire fundo
+QUADRO DE REFERÊNCIA — GATO ACOMODADO
+Dê uma volta
+CONCEITUAL — TRILHA DE PASSOS A PRODUZIR
+Beba água
+CONCEITUAL — GARRAFA ENCHENDO A PRODUZIR
+Mande um oi
+CONCEITUAL — CELULAR VIBRANDO A PRODUZIR
+Olhe pela janela
+CONCEITUAL — AMPULHETA/JANELA A PRODUZIR
+FOCUS — PAINEL DE PAUSA
+07 / 12
+
+--- PAGE 8 ---
+07 — TELA DE REFERÊNCIA
+FOCUS
+/ PAINEL DE PAUSA
+07
+LIGHT THEME
+Composição final — claro
+ZON A PR OTE GI DA — CR ON ÔM E TR O E BOTÃO SE M PR E VI SÍ VE I S
+19:55
+ENCERRAR PAUSA
+Alongue-se
+Fim do ciclo 4 de foco · 3 ciclos do mínimo
+CON CL UIR
+QUADRO 2
+FOCUS — PAINEL DE PAUSA
+08 / 12
+
+--- PAGE 9 ---
+07 — TELA DE REFERÊNCIA
+FOCUS
+/ PAINEL DE PAUSA
+07
+DARK THEME
+Composição final — escuro
+ZON A PR OTE GI DA — CR ON ÔM E TR O E BOTÃO SE M PR E VI SÍ VE I S
+19:40
+ENCERRAR PAUSA
+Respire fundo
+Fim do ciclo 10 de foco · +2 ciclos do ideal
+CON CL UIR
+QUADRO 1
+FOCUS — PAINEL DE PAUSA
+09 / 12
+
+--- PAGE 10 ---
+08 — VARIAÇÕES
+FOCUS
+/ PAINEL DE PAUSA
+08
+NEM TODA PAUSA PEDE A MESMA COISA
+Pausa curta vs. pausa longa
+PAUSA CURTA — 5 MIN
+01
+Comandos rápidos e de baixo esforço físico: alongar, beber
+água, olhar pela janela.
+02
+A animação roda em loop curto — não precisa contar uma
+cena completa, só sugerir o gesto.
+03
+O painel fecha sozinho se o tempo da pausa acabar antes
+do "Concluir" ser tocado.
+PAUSA LONGA — ATÉ 20 MIN
+01
+Comandos de maior fôlego: caminhar, respirar, entrar em
+contato com alguém importante.
+02
+Exclusivo deste contexto: a variação de "mandar um oi" —
+reservada às pausas longas, nunca às curtas — por pedir
+tempo real de conversa, não só um gesto de 5 minutos.
+03
+O footer de progresso ganha mais destaque, já que pausas
+longas coincidem com o fim de um bloco inteiro de sessão.
+FOCUS — PAINEL DE PAUSA
+10 / 12
+
+--- PAGE 11 ---
+09 — SÍNTESE
+FOCUS
+/ PAINEL DE PAUSA
+09
+TOKENS DESTE COMPONENTE
+Resumo técnico
+Tipografia do comando
+Lora 600, itálico — única aparição de itálico no sistema FOCUS
+Tipografia da legenda
+Lora 400 itálico (mínimo/ideal) · Poppins 500 (extraordinário, cor ouro)
+Escala do comando
+42–48px — maior texto corrido de todo o produto
+Cor do botão
+#1F5C45 claro · #4C9E7C escuro — sombra sólida deslocada 5px
+Cor da legenda extraordinária
+#B8862E claro · #D9AA55 escuro
+Estrutura
+Sem border-radius, borda 1px, sem gradiente — herdado da identidade principal
+Exceção de camada
+Pixel art com dithering permitida apenas nos quadros de animação, nunca no restante da UI
+Zona protegida
+Faixa inferior com cronômetro + botão "Encerrar pausa" nunca é sobreposta pelo card
+FOCUS — PAINEL DE PAUSA
+11 / 12
+
+--- PAGE 12 ---
+FOCUS
+12 / 12
+A pausa não interrompe o instrumento.
+Ela também é registrada por ele.
+Este painel existe para que descansar seja tão deliberado quanto focar — um comando curto, uma cena que passa, e a
+confiança de que o cronômetro nunca some de vista.
+PRÓXIMA ETAPA — PRODUÇÃO DOS QUADROS NO GEMINI

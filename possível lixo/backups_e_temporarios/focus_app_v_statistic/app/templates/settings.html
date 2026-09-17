@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">Configurações</div>
+
+<div class="settings-grid">
+  <div>
+    <div class="section-label" style="text-align:left;margin-bottom:16px;">Parâmetros</div>
+    <form method="post" action="{{ url_for('settings.update_settings') }}">
+      <div class="field"><label>Foco (min)</label><input type="number" name="focus_minutes" value="{{ cfg.focus_minutes }}"></div>
+      <div class="field"><label>Pausa curta (min)</label><input type="number" name="short_break_minutes" value="{{ cfg.short_break_minutes }}"></div>
+      <div class="field"><label>Pausa longa (min)</label><input type="number" name="long_break_minutes" value="{{ cfg.long_break_minutes }}"></div>
+      <div class="field"><label>Ciclos por sessão</label><input type="number" name="cycles_per_session" value="{{ cfg.cycles_per_session }}"></div>
+      <div class="field"><label>Meta diária mínima</label><input type="number" name="daily_minimum_goal" value="{{ cfg.daily_minimum_goal }}"></div>
+      <div class="field"><label>Meta diária ideal</label><input type="number" name="daily_ideal_goal" value="{{ cfg.daily_ideal_goal }}"></div>
+      <div class="field"><label>Meta semanal</label><input type="number" name="weekly_goal" value="{{ cfg.weekly_goal }}"></div>
+      <div class="field"><label>Garrafa (mL)</label><input type="number" name="water_bottle_ml" value="{{ cfg.water_bottle_ml }}"></div>
+      <div class="field"><label>Meta de hidratação (mL)</label><input type="number" name="water_goal_ml" value="{{ cfg.water_goal_ml }}"></div>
+      <div class="field">
+        <label>Tema</label>
+        <select name="theme">
+          <option value="dark" {{ 'selected' if cfg.theme=='dark' }}>Dark</option>
+          <option value="light" {{ 'selected' if cfg.theme=='light' }}>Light</option>
+        </select>
+      </div>
+      <button class="btn filled" type="submit" style="margin-top:8px;">SALVAR</button>
+    </form>
+  </div>
+
+  <div>
+    <div class="section-label" style="text-align:left;margin-bottom:16px;">Histórico de configuração</div>
+    {% for c in history %}
+    <div class="history-entry {{ 'current' if c.valid_to is none }}">
+      <div class="range">{{ c.valid_from.strftime('%d/%m') }} — {{ 'atual' if c.valid_to is none else c.valid_to.strftime('%d/%m') }}</div>
+      <div class="desc">Foco {{ c.focus_minutes }} min · Meta ideal {{ c.daily_ideal_goal }} ciclos</div>
+    </div>
+    {% endfor %}
+
+    <div class="section-label" style="text-align:left;margin:32px 0 12px 0;">Wishlist</div>
+    {% for item in wishlist %}
+      <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">{{ item.title }} — {{ item.suggested_goal }} ciclos ({{ item.status }})</div>
+    {% endfor %}
+    <form class="inline" method="post" action="{{ url_for('settings.add_wishlist_item') }}">
+      <input type="text" name="title" placeholder="título">
+      <input type="number" name="suggested_goal" placeholder="ciclos">
+      <button class="btn small" type="submit">+</button>
+    </form>
+
+    <div class="section-label" style="text-align:left;margin:32px 0 12px 0;">Recompensas</div>
+    {% for r in rewards %}
+      <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">{{ r.title }} — {{ r.progress_type }}</div>
+    {% endfor %}
+    <form class="inline" method="post" action="{{ url_for('settings.add_reward') }}">
+      <input type="text" name="title" placeholder="título">
+      <select name="progress_type">
+        <option value="daily_minimum">mínimo</option>
+        <option value="daily_ideal">ideal</option>
+        <option value="weekly">semanal</option>
+        <option value="absolute">absoluto</option>
+      </select>
+      <button class="btn small" type="submit">+</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

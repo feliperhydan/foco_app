@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block title_suffix %} — Caderno Diário{% endblock %}
+
+{% block content %}
+<div class="notebook-wrapper" data-date="{{ ref_date.isoformat() }}">
+
+  <!-- CABEÇALHO DO DIA (CENTRALIZADO, PERTENCE AO DIA TODO) -->
+  <div class="notebook-header">
+    <div class="notebook-weekday">{{ date_fmt.weekday }}</div>
+    <div class="notebook-title-row">
+      <a href="{{ url_for('notebook.notebook', date=prev_date, tab=tab) }}" class="notebook-nav-arrow" title="Dia anterior">←</a>
+      <h1 class="notebook-date">{{ date_fmt.date_formatted }}</h1>
+      <a href="{{ url_for('notebook.notebook', date=next_date, tab=tab) }}" class="notebook-nav-arrow" title="Próximo dia">→</a>
+    </div>
+
+    {% if is_past %}
+      <div class="notebook-status-tag">CADERNO ENCERRADO — SOMENTE LEITURA</div>
+    {% elif is_future %}
+      <div class="notebook-status-tag future">PROGRAMAÇÃO FUTURA</div>
+    {% endif %}
+  </div>
+
+  <!-- CONTAINER DO CADERNO COM MARCADORES LATERAIS -->
+  <div class="notebook-container">
+
+    <!-- MARCADORES DE PÁGINA (ABAS LATERAIS À ESQUERDA) -->
+    <nav class="notebook-tabs" aria-label="Marcadores de página">
+      <a href="{{ url_for('notebook.notebook', date=ref_date.isoformat(), tab='registro') }}" 
+         class="notebook-tab tab-registro {{ 'active' if tab in ('registro', 'retrato') }}" 
+         title="REGISTRO PESSOAL">
+        <span class="tab-color"></span>
+        <span class="tab-label">REGISTRO</span>
+      </a>
+      <a href="{{ url_for('notebook.notebook', date=ref_date.isoformat(), tab='programacao') }}" 
+         class="notebook-tab tab-programacao {{ 'active' if tab == 'programacao' }}" 
+         title="PROGRAMAÇÃO POR DATA">
+        <span class="tab-color"></span>
+        <span class="tab-label">PROGRAMAÇÃO</span>
+      </a>
+      <a href="{{ url_for('notebook.notebook', date=ref_date.isoformat(), tab='protocolos') }}" 
+         class="notebook-tab tab-protocolos {{ 'active' if tab == 'protocolos' }}" 
+         title="PROTOCOLOS COTIDIANOS">
+        <span class="tab-color"></span>
+        <span class="tab-label">PROTOCOLOS</span>
+      </a>
+      <a href="{{ url_for('notebook.notebook', date=ref_date.isoformat(), tab='pos_ciclos') }}" 
+         class="notebook-tab tab-pos-ciclos {{ 'active' if tab == 'pos_ciclos' }}" 
+         title="ANOTAÇÕES PÓS-CICLO">
+        <span class="tab-color"></span>
+        <span class="tab-label">PÓS-CICLOS</span>
+      </a>
+    </nav>
+
+    <!-- OBJETO PLANO DO CADERNO (DUAS PÁGINAS SEPARADAS POR LOMBADA) -->
+    <div class="notebook-frame">
+
+      {% if tab == 'registro' or tab == 'retrato' %}
+        <!-- PÁGINA ESQUERDA: REGISTRO PESSOAL -->
+        <div class="notebook-page notebook-page-left {{ 'focused' if tab == 'registro' }}">
+          <div class="page-header-row">
+            <div class="page-label">REGISTRO PESSOAL</div>
+            {% if programacao_items and programacao_items|length > 0 %}
+              <button type="button" class="btn-toggle-programacao" id="btn-toggle-programacao" title="Ver / alternar programação do dia">
+                PROGRAMAÇÃO
+              </button>
+            {% endif %}
+          </div>
+
+          <!-- PAINEL "CONSIDERE ISSO PARA O SEU DIA" -->
+          {% if programacao_items and programacao_items|length > 0 %}
+          <div class="programacao-panel" id="programacao-panel" style="display: {{ 'block' if show_programacao_banner else 'none' }};">
+            <div class="programacao-header">
+              <span class="prog-square"></span>
+              <h3>Considere isso para o seu dia:</h3>
+            </div>
+            <ul class="programacao-list">
+              {% for p_item in programacao_items %}
+                <li data-item-id="{{ p_item.id }}">• {{ p_item.text }}</li>
+              {% endfor %}
+            </ul>
+            <div class="programacao-actions">
+              <button type="button" class="btn-prog-ok" id="btn-programacao-ok">OK</button>
+              {% if is_today %}
+                <button type="button" class="btn-prog-copy" id="btn-programacao-copy">COPIAR PARA O CADERNO</button>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- LISTA DE LINHAS DE REGISTRO PESSOAL -->
+          <div class="registro-editor" id="registro-editor" data-editable="{{ 'true' if is_today else 'false' }}" data-date="{{ ref_date.isoformat() }}">
+            <div class="registro-lines" id="registro-lines">
+              <!-- Renderizado via JavaScript / backend -->
+            </div>
+
+            {% if is_today %}
+            <!-- TOOLBAR DO EDITOR (SOMENTE NO DIA ATUAL) -->
+            <div class="editor-toolbar" id="editor-toolbar">
+              <!-- GRUPO 1: EDITORES DE TEXTO (PRIMEIRA EVIDÊNCIA) -->
+              <div class="toolbar-group toolbar-group-text" title="Editores de Texto">
+                <button type="button" class="tool-btn font-size-btn" id="btn-font-size" title="Tamanho da Fonte (Pequeno, Médio, Grande)">
+                  <span class="fs-item fs-small active" data-size="small">A</span>
+                  <span class="fs-item fs-medium" data-size="medium">A</span>
+                  <span class="fs-item fs-large" data-size="large">A</span>
+                </button>
+
+                <div class="color-picker" title="Escolher cor da caneta">
+                  <button type="button" class="color-dot color-default active" data-color="default" title="Preto/Branco (Padrão)"></button>
+                  <button type="button" class="color-dot color-green" data-color="green" title="Verde (Progresso)"></button>
+                  <button type="button" class="color-dot color-red" data-color="red" title="Vermelho (Aviso)"></button>
+                  <button type="button" class="color-dot color-blue" data-color="blue" title="Azul (Anotações)"></button>
+                </div>
+
+                <button type="button" class="tool-btn tool-btn-text" id="tool-bold" title="Alternar Destaque / Negrito">
+                  <strong>B</strong> <span class="tool-btn-label">Negrito</span>
+                </button>
+              </div>
+
+              <!-- DIVISOR SUBTIL ENTRE CATEGORIAS -->
+              <div class="toolbar-divider" aria-hidden="true"></div>
+
+              <!-- GRUPO 2: EDITORES DE LINHA -->
+              <div class="toolbar-group toolbar-group-line" title="Editores de Linha">
+                <button type="button" class="tool-btn tool-btn-line" id="tool-checkbox" title="Inserir Checkbox">
+                  <span class="square-icon">☐</span> <span class="tool-btn-label">Checkbox</span>
+                </button>
+                <button type="button" class="tool-btn tool-btn-line" id="tool-bullet" title="Inserir Bullet">
+                  <span class="bullet-icon">•</span> <span class="tool-btn-label">Bullet</span>
+                </button>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- LOMBADA CENTRAL DE 1PX COM FUROS DISCRETOS -->
+        <div class="notebook-spine">
+          <span class="spine-dot top"></span>
+          <span class="spine-dot bottom"></span>
+        </div>
+
+        <!-- PÁGINA DIREITA: RETRATO DO DIA -->
+        <div class="notebook-page notebook-page-right {{ 'focused' if tab == 'retrato' }}">
+          <div class="page-label">RETRATO DO DIA</div>
+
+          <!-- BLOCO AUTOMÁTICO DO SISTEMA -->
+          <div class="retrato-block">
+            <div class="sub-label">FOCO — AUTOMÁTICO</div>
+
+            {% if retrato.has_activity %}
+            <div class="kv-grid">
+              <div class="kv-row">
+                <span class="kv-k">Ciclos</span>
+                <span class="kv-v bold">{{ retrato.cycles }}</span>
+              </div>
+              <div class="kv-row">
+                <span class="kv-k">Minutos de foco</span>
+                <span class="kv-v bold">{{ retrato.focus_minutes_fmt }}</span>
+              </div>
+              <div class="kv-row">
+                <span class="kv-k">Pausas</span>
+                <span class="kv-v">{{ retrato.pausas_fmt }}</span>
+              </div>
+              <div class="kv-row">
+                <span class="kv-k">Água</span>
+                <span class="kv-v">{{ retrato.water_fmt }}</span>
+              </div>
+              <div class="kv-row">
+                <span class="kv-k">To-do</span>
+                <span class="kv-v bold">{{ retrato.todo_fmt }}</span>
+              </div>
+              <div class="kv-row">
+                <span class="kv-k">Metas do dia</span>
+                <span class="kv-v muted">{{ retrato.metas_fmt }}</span>
+              </div>
+            </div>
+            {% else %}
+            <!-- ESTADO VAZIO NEUTRO (SEM ZEROS) -->
+            <div class="neutral-empty-text">
+              Nenhum ciclo de foco registrado neste dia.
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="block-divider"></div>
+
+          <!-- BLOCO PREENCHIDO PELO USUÁRIO -->
+          <div class="retrato-block">
+            <div class="sub-label">PREENCHIDO PELO USUÁRIO</div>
+
+            <div class="user-input-rows">
+              <div class="user-input-row">
+                <label for="input-inicio-estudos">Início dos estudos</label>
+                {% if is_today %}
+                  <input type="text" id="input-inicio-estudos" class="input-time" placeholder="07:45" value="{{ retrato.user_inicio }}">
+                {% else %}
+                  <span class="static-val">{{ retrato.user_inicio or '—' }}</span>
+                {% endif %}
+              </div>
+
+              <div class="user-input-row">
+                <label for="input-fim-estudos">Fim dos estudos</label>
+                {% if is_today %}
+                  <input type="text" id="input-fim-estudos" class="input-time" placeholder="18:20" value="{{ retrato.user_fim }}">
+                {% else %}
+                  <span class="static-val">{{ retrato.user_fim or '—' }}</span>
+                {% endif %}
+              </div>
+
+              <div class="user-input-row cansaco-row">
+                <label>Nível de cansaço</label>
+                <div class="cansaco-blocks" id="cansaco-blocks" data-level="{{ retrato.user_cansaco }}" data-editable="{{ 'true' if is_today else 'false' }}">
+                  {% for level in range(1, 6) %}
+                    <button type="button" class="cansaco-block {{ 'active' if retrato.user_cansaco >= level }}" data-level="{{ level }}" title="Nível {{ level }}" {{ 'disabled' if not is_today }}></button>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      {% elif tab == 'programacao' %}
+        <!-- SEÇÃO PROGRAMAÇÃO POR DATA -->
+        <div class="notebook-page full-width">
+          <div class="page-label">PROGRAMAÇÃO POR DATA</div>
+
+          <div class="section-desc">
+            Registre demandas e assuntos que precisam ser considerados em uma data específica.
+          </div>
+
+          <!-- FORMULÁRIO DE NOVA PROGRAMAÇÃO -->
+          <form id="form-programacao" class="notebook-form" style="margin-bottom: 24px;">
+            <input type="hidden" name="target_date" value="{{ ref_date.isoformat() }}">
+            <div class="form-row">
+              <input type="text" name="text" id="prog-text-input" placeholder="Ex: Levar documento da faculdade, revisar capítulo 4..." required style="flex:1;">
+              <button type="submit" class="btn small filled">+ Agendar para {{ ref_date.strftime('%d/%m') }}</button>
+            </div>
+          </form>
+
+          <!-- LISTA DE ITENS PROGRAMADOS -->
+          <div class="programacao-list-container">
+            <h4 style="margin-bottom: 12px;">Itens agendados para esta data:</h4>
+            {% if programacao_items %}
+              <ul class="programacao-full-list">
+                {% for p_item in programacao_items %}
+                  <li class="prog-item {{ 'copied' if p_item.copied }}" data-item-id="{{ p_item.id }}">
+                    <button type="button" class="btn-delete-prog" data-item-id="{{ p_item.id }}" title="Excluir item" aria-label="Excluir item">×</button>
+                    <span class="bullet">•</span>
+                    <span class="text">{{ p_item.text }}</span>
+                    {% if p_item.copied %}
+                      <span class="tag-copied">Copiado para o Registro</span>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <div class="neutral-empty-text">Nenhuma programação registrada para este dia.</div>
+            {% endif %}
+          </div>
+        </div>
+
+      {% elif tab == 'protocolos' %}
+        <!-- SEÇÃO PROTOCOLOS COTIDIANOS -->
+        <div class="notebook-page full-width">
+          <div class="protocols-header-bar">
+            <div>
+              <div class="page-label">PROTOCOLOS COTIDIANOS</div>
+              <div class="section-desc">
+                Estruturas reutilizáveis de comportamento e rotina para momentos recorrentes do dia (máximo 6).
+              </div>
+            </div>
+            <div>
+              {% if protocols|length < 6 %}
+                <button type="button" class="btn small filled" id="btn-open-protocol-panel">+ Novo Protocolo</button>
+              {% else %}
+                <span class="protocol-limit-tag" title="Limite de 6 protocolos atingido">Limite atingido (6/6)</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- PAINEL DE CRIAÇÃO / EDIÇÃO DE PROTOCOLO -->
+          <div class="protocol-editor-panel" id="protocol-editor-panel" style="display: none;">
+            <div class="protocol-editor-header">
+              <h3 id="protocol-editor-title">Novo Protocolo</h3>
+              <button type="button" class="btn-close-panel" id="btn-close-protocol-panel" title="Fechar">&times;</button>
+            </div>
+            <form id="form-protocol" class="notebook-form">
+              <input type="hidden" id="protocol-id-input" value="">
+              
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="protocol-title-input">Título do Protocolo *</label>
+                  <input type="text" id="protocol-title-input" placeholder="Ex: Transição da Manhã" required>
+                </div>
+                <div class="form-group">
+                  <label for="protocol-time-input">Horário para Realização</label>
+                  <input type="text" id="protocol-time-input" placeholder="Ex: 08:00 - 08:15">
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="protocol-duration-input">Tempo Médio (minutos) *</label>
+                  <input type="number" id="protocol-duration-input" min="1" max="300" placeholder="15" value="15" required>
+                </div>
+                <div class="form-group">
+                  <label for="protocol-objective-input">Objetivo *</label>
+                  <input type="text" id="protocol-objective-input" placeholder="Ex: Ativação biológica e alinhamento de prioridades" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="protocol-activities-input">Lista de Atividades na Ordem (uma por linha) *</label>
+                <textarea id="protocol-activities-input" rows="4" placeholder="1. Hidratação (500ml de água)&#10;2. Alongamento leve&#10;3. Leitura do planejamento do dia" required></textarea>
+                <span class="form-hint">Escreva cada atividade em uma nova linha. A sequência será preservada.</span>
+              </div>
+
+              <div class="protocol-form-actions">
+                <button type="submit" class="btn small filled" id="btn-save-protocol">Salvar Protocolo</button>
+                <button type="button" class="btn small ghost" id="btn-cancel-protocol">Cancelar</button>
+                <button type="button" class="btn small danger" id="btn-delete-protocol-form" style="display: none; margin-left: auto;">Excluir Protocolo</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="protocols-grid">
+            {% for proto in protocols %}
+              <div class="protocol-card" data-protocol-id="{{ proto.id }}">
+                <div class="protocol-card-actions">
+                  <button type="button" class="btn-edit-protocol" data-protocol-id="{{ proto.id }}" title="Editar protocolo">✎</button>
+                  <button type="button" class="btn-delete-protocol" data-protocol-id="{{ proto.id }}" title="Excluir protocolo">&times;</button>
+                </div>
+                <div class="protocol-head">
+                  <h3 class="protocol-title">{{ proto.title }}</h3>
+                  <span class="protocol-time">{{ proto.recommended_time or '' }} ({{ proto.avg_duration_minutes }} min)</span>
+                </div>
+                <p class="protocol-objective">{{ proto.objective }}</p>
+
+                <div class="protocol-activities">
+                  <div class="sub-title">Atividades recomendadas:</div>
+                  <ul>
+                    {% for act in proto.activities %}
+                      <li>✓ {{ act }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+
+                {% if is_today %}
+                  <button type="button" class="btn small ghost btn-copy-protocol" data-protocol-id="{{ proto.id }}" style="margin-top: 14px; width:100%;">
+                    Copiar atividades para o Registro de Hoje
+                  </button>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      {% elif tab == 'pos_ciclos' %}
+        <!-- SEÇÃO ANOTAÇÕES PÓS-CICLO -->
+        <div class="notebook-page full-width">
+          <div class="page-label">ANOTAÇÕES PÓS-CICLO</div>
+
+          <div class="section-desc">
+            Capture rapidamente ideias, tarefas e lembretes que surgiram durante ou após os ciclos sem interromper seu foco.
+          </div>
+
+          {% if not is_past %}
+          <!-- FORMULÁRIO RÁPIDO DE PÓS-CICLO -->
+          <form id="form-pos-ciclo" class="notebook-form" style="margin-bottom: 24px;">
+            <input type="hidden" name="date" value="{{ ref_date.isoformat() }}">
+            <div class="form-row" style="gap: 10px;">
+              <select name="category" id="note-category" style="width: 140px;">
+                <option value="lembrete">Lembrete</option>
+                <option value="ideia">Ideia</option>
+                <option value="tarefa">Tarefa</option>
+                <option value="duvida">Dúvida</option>
+              </select>
+              <input type="text" name="content" placeholder="Anotação rápida..." required style="flex:1;">
+              <button type="submit" class="btn small filled">+ Salvar Nota</button>
+            </div>
+          </form>
+          {% endif %}
+
+          <div class="pos-ciclos-list">
+            {% if post_cycle_notes %}
+              <div class="notes-grid">
+                {% for note in post_cycle_notes %}
+                  <div class="note-card category-{{ note.category }} {{ 'resolved' if note.resolved }}">
+                    <button type="button" class="btn-delete-note" data-note-id="{{ note.id }}" title="Excluir anotação" aria-label="Excluir anotação">×</button>
+                    <div class="note-header">
+                      <span class="note-badge">{{ note.category | upper }}</span>
+                      {% if note.cycle_number %}
+                        <span class="note-cycle">Ciclo {{ note.cycle_number }}</span>
+                      {% endif %}
+                    </div>
+                    <div class="note-content">{{ note.content }}</div>
+                    {% if is_today %}
+                      <button type="button" class="btn small ghost btn-toggle-note" data-note-id="{{ note.id }}">
+                        {{ 'Desmarcar' if note.resolved else 'Marcar como Resolvido' }}
+                      </button>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="neutral-empty-text">Nenhuma anotação pós-ciclo registrada nesta data.</div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.NOTEBOOK_INITIAL_CONTENT = {{ entry.registro_content | tojson | safe }};
+  window.NOTEBOOK_PROTOCOLS = {{ protocols | tojson | safe }};
+</script>
+<script src="{{ url_for('static', filename='js/notebook.js') }}"></script>
+{% endblock %}

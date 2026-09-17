@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="{{ (cfg.theme if cfg is defined else 'dark') }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FOCUS{% block title_suffix %}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="shell">
+    <nav class="sidebar">
+      <a href="{{ url_for('main.home') }}" class="{{ 'active' if request.endpoint=='main.home' }}" title="Home">
+        <svg viewBox="0 0 28 28" class="icon"><path d="M4 12L14 4l10 8"/><path d="M7 11v11h14V11"/></svg>
+      </a>
+      <a href="#" id="toggle-calendar" title="Atividade">
+        <svg viewBox="0 0 28 28" class="icon"><rect x="4" y="4" width="4" height="4"/><rect x="10" y="4" width="4" height="4"/><rect x="16" y="4" width="4" height="4"/><rect x="4" y="10" width="4" height="4"/><rect x="10" y="10" width="4" height="4"/></svg>
+      </a>
+      <a href="{{ url_for('stats.stats') }}" class="{{ 'active' if request.endpoint=='stats.stats' }}" title="Estatísticas">
+        <svg viewBox="0 0 28 28" class="icon"><path d="M6 22V13"/><path d="M14 22V6"/><path d="M22 22v-9"/></svg>
+      </a>
+      <a href="{{ url_for('rewards.rewards') }}" class="{{ 'active' if request.endpoint=='rewards.rewards' }}" title="Recompensas">
+        <svg viewBox="0 0 28 28" class="icon"><rect x="7" y="9" width="14" height="13"/><path d="M14 9V5"/></svg>
+      </a>
+      <div class="sidebar-bottom">
+        <a href="{{ url_for('settings.settings') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('settings.') }}" title="Configurações">
+          <svg viewBox="0 0 28 28" class="icon"><circle cx="14" cy="14" r="4"/><path d="M14 3v4M14 21v4M3 14h4M21 14h4M6 6l3 3M19 19l3 3M22 6l-3 3M9 19l-3 3"/></svg>
+        </a>
+      </div>
+    </nav>
+    <main class="main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script>
+    // tema salvo no cliente só para alternância manual futura;
+    // a fonte de verdade do tema é Configuration.theme (renderizado no servidor).
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

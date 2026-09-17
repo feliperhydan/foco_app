@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="resting-wrapper">
+
+<!-- Painel de Pausa -->
+<div class="pause-card" id="pause-card" data-quadro="QUADRO">
+  <div class="pause-card-content">
+    <div class="pause-card-left">
+      <h1 class="pause-message" id="pause-message">Alongue-se</h1>
+      <p class="pause-legend" id="pause-legend">Fim do ciclo 4 de foco · 3 ciclos da média</p>
+      <button class="btn-pause-conclude" id="btn-conclude-pause">CONCLUIR</button>
+    </div>
+    <div class="pause-card-right">
+      <img id="pause-animation" src="" alt="Animação de Pausa">
+    </div>
+  </div>
+</div>
+
+<!-- Zona Protegida (apenas visível em modo descanso) -->
+<div class="protected-zone" id="protected-zone">
+  <div class="protected-zone-label">&#9679; ZONA PROTEGIDA — CRONÔMETRO E BOTÃO SEMPRE VISÍVEIS</div>
+</div>
+
+<div class="home-with-todo">
+
+  <!-- COLUNA ESQUERDA: TO-DO -->
+  <aside class="todo-widget" id="todo-widget">
+    <div class="postit-label">TO-DO</div>
+    <div class="postit" id="todo-postit" data-can-add="{{ 'true' if todo_can_add else 'false' }}">
+      {% if todos %}
+        {% for item in todos %}
+        <div class="postit-row" data-id="{{ item.id }}">
+          <button class="todo-dot{% if item.done %} done{% endif %}" type="button" aria-label="Alternar tarefa"></button>
+          <input class="todo-text{% if item.done %} done{% endif %}" type="text" value="{{ item.text }}" maxlength="140" data-original="{{ item.text }}">
+          <button class="todo-action remove" type="button" aria-label="Excluir tarefa">&times;</button>
+          <button class="todo-action add{% if not todo_can_add %} disabled{% endif %}" type="button" aria-label="Adicionar tarefa">+</button>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="postit-row postit-row-empty">
+          <button class="todo-dot" type="button" aria-label="Tarefa vazia" disabled></button>
+          <input class="todo-text" type="text" value="" maxlength="140" placeholder="Escreva..." data-empty-row="true">
+          <button class="todo-action add{% if not todo_can_add %} disabled{% endif %}" type="button" aria-label="Adicionar tarefa">+</button>
+        </div>
+      {% endif %}
+    </div>
+    <div class="todo-error" id="todo-error"></div>
+  </aside>
+
+  <!-- COLUNA CENTRAL: Barras + Timer + Calendário -->
+  <div class="home-stack">
+    <div class="section-label home-group-label" id="label-minimum">MÉDIA{% if active_min %} — {{ active_min.title | upper }}{% endif %}</div>
+    <div class="barblock">
+      <div class="barlabel"><span>Média</span><span class="barvalue">{{ daily_min.current_count }} / {{ daily_min.goal }}</span></div>
+      <div class="bartrack"><div class="barfill" style="width:{{ daily_min.pct }}%"></div></div>
+    </div>
+
+    <div class="section-label home-group-label" id="label-ideal">IDEAL{% if active_ideal %} — {{ active_ideal.title | upper }}{% endif %}</div>
+    <div class="barblock">
+      <div class="barlabel"><span>Ideal</span><span class="barvalue">{{ daily_ideal.current_count }} / {{ daily_ideal.goal }}</span></div>
+      <div class="bartrack"><div class="barfill" style="width:{{ daily_ideal.pct }}%"></div></div>
+    </div>
+
+    {% if extra %}
+    <div class="extra-block visible" id="extra-block">
+      <div class="barlabel"><span style="color:var(--extra)">Extraordinário</span><span class="barvalue">+{{ extra.extra_cycles }}</span></div>
+      <div class="bartrack"><div class="barfill extra" id="extra-fill" style="width:{{ [100, extra.extra_cycles * 15] | min }}%"></div></div>
+    </div>
+    {% else %}
+    <div class="extra-hint" id="extra-hint">extraordinário surge ao completar média + ideal</div>
+    <div class="extra-block" id="extra-block">
+      <div class="barlabel"><span style="color:var(--extra)">Extraordinário</span><span class="barvalue" id="extra-value">+0</span></div>
+      <div class="bartrack"><div class="barfill extra" id="extra-fill" style="width:0%"></div></div>
+    </div>
+    {% endif %}
+
+    <div class="section-label home-group-label" id="label-weekly">SEMANAL{% if active_weekly %} — {{ active_weekly.title | upper }}{% endif %}</div>
+    <div class="barblock">
+      <div class="barlabel"><span>Semanal</span><span class="barvalue">{{ weekly.current_count }} / {{ weekly.goal }}</span></div>
+      <div class="bartrack"><div class="barfill" style="width:{{ weekly.pct }}%"></div></div>
+    </div>
+
+    <div class="section-label home-group-label">OBJETIVO{% if absolute %} — {{ absolute.title | upper }}{% endif %}</div>
+    {% if absolute %}
+    <div class="barblock">
+      <div class="barlabel"><span>Absoluto</span><span class="barvalue">{{ absolute.current_count }} / {{ absolute.goal_cycles }}</span></div>
+      <div class="bartrack"><div class="barfill" style="width:{{ (100 * absolute.current_count / absolute.goal_cycles) | round | int }}%"></div></div>
+    </div>
+    {% else %}
+    <p style="text-align:center;font-size:12px;color:var(--text3);max-width:320px;margin:0 auto 34px auto;">
+      Nenhum objetivo absoluto ativo. Escolha um na <a href="{{ url_for('rewards.rewards') }}" style="color:var(--primary);text-decoration:underline;">wishlist</a>.
+    </p>
+    {% endif %}
+
+    <div class="timer-wrap">
+      <div class="timer-state" id="timer-state">IDLE</div>
+      <div class="num timer-num" id="timer-display">{{ '%02d:00' % cfg.focus_minutes }}</div>
+      <div class="extra-promo-badge" id="extra-promo-badge" style="display:none;">
+        <span class="extra-promo-label">Extraordinário</span>
+        <div class="extra-promo-body">
+          <span class="extra-promo-pill" id="extra-promo-pill"></span>
+          <span class="extra-promo-original" id="extra-promo-original"></span>
+        </div>
+      </div>
+      <div class="timer-actions" id="timer-actions">
+        <button class="btn filled{{ ' extraordinary' if (extra or daily_ideal.current_count >= daily_ideal.goal) else '' }}" id="btn-start">INICIAR</button>
+      </div>
+
+      <div class="post-cycle-msg" id="post-cycle-msg"></div>
+      <div class="post-cycle-msg" id="timer-error" style="color:var(--alert);"></div>
+    </div>
+
+  </div><!-- fim home-stack -->
+
+  <!-- COLUNA DIREITA: Garrafa de água -->
+  <div class="water-column" id="water-wrap">
+    <div class="water-label">Hidratação</div>
+    <div class="bottle-wrap">
+      <div class="bottle-cap"></div>
+      <div class="bottle-neck"></div>
+      <div class="bottle-body">
+        <div class="bottle-fill" id="bottle-fill" style="height:{{ [100, water.pct] | min }}%"></div>
+      </div>
+    </div>
+    <div class="num water-value" id="water-value">{{ water.total_l }}L / {{ water.goal_l }}L</div>
+    <button class="btn small ghost" id="btn-water" style="margin-top: 8px;">+1 GARRAFA</button>
+  </div>
+
+</div><!-- fim home-with-todo -->
+
+</div><!-- fim resting-wrapper -->
+
+<!-- modal pós-ciclo -->
+<div class="modal-overlay" id="post-cycle-modal">
+  <div class="modal">
+    <div class="section-label">CICLO CONCLUÍDO</div>
+    <label style="font-size:13px;font-weight:300;">O que você fez?</label>
+    <input type="text" id="cycle-title" placeholder="opcional">
+    <button class="btn filled" id="btn-conclude" style="width:100%;">CONCLUIR</button>
+    <div class="modal-message" id="modal-message"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.FOCUS_STATE = {
+    focusMinutes: {{ cfg.focus_minutes }},
+    shortBreakMinutes: {{ cfg.short_break_minutes }},
+    longBreakMinutes: {{ cfg.long_break_minutes }},
+    cyclesPerSession: {{ cfg.cycles_per_session }},
+    autoStartFocus: {{ 'true' if cfg.auto_start_focus else 'false' }},
+    autoStartBreak: {{ 'true' if cfg.auto_start_break else 'false' }},
+    postCycleMessagesEnabled: {{ 'true' if cfg.post_cycle_messages_enabled else 'false' }},
+    volumeSystem: {{ cfg.volume_system if cfg.volume_system is defined else 100 }},
+    volumeFocusEnd: {{ cfg.volume_focus_end if cfg.volume_focus_end is defined else 100 }},
+    volumeRestEnd: {{ cfg.volume_rest_end if cfg.volume_rest_end is defined else 100 }},
+    soundFocusEnd: "{{ cfg.sound_focus_end if cfg.sound_focus_end is defined else '/static/sounds/fim_de_foco.mp3' }}",
+    soundConcludeBtn: "{{ cfg.sound_conclude_btn if cfg.sound_conclude_btn is defined else '/static/sounds/do_pos_conclusao.mp3' }}",
+    soundRestEnd: "{{ cfg.sound_rest_end if cfg.sound_rest_end is defined else '/static/sounds/fim_de_descanso.mp3' }}",
+    dailyIdealGoal: {{ daily_ideal.goal }},
+    dailyIdealCurrent: {{ daily_ideal.current_count }},
+    extraordinaryUnlocked: {{ 'true' if extra else 'false' }},
+    extraordinaryPromo: {{ extraordinary_promo | tojson if extraordinary_promo else 'null' }},
+    currentDay: "{{ current_day.isoformat() if current_day is defined else '' }}"
+  };
+</script>
+<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+<script src="{{ url_for('static', filename='js/water.js') }}"></script>
+<script src="{{ url_for('static', filename='js/todo.js') }}"></script>
+{% endblock %}

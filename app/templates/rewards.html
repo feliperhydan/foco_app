@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">Recompensas</div>
+
+<div class="settings-grid">
+  <div>
+    <!-- Barra única de criação -->
+    <div class="section-label" style="text-align:left;margin-bottom:12px;">Criar Nova Recompensa</div>
+    <form class="inline" method="post" action="{{ url_for('rewards.create_reward') }}"
+      style="margin-bottom:32px; justify-content: flex-start; gap: 8px; width: 100%; max-width: 500px;">
+      <input type="text" name="title" placeholder="Nova recompensa..." required
+        style="flex:1; border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 8px; font-size: 13px;">
+      <select name="progress_type" required
+        style="width: 140px; border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 8px; font-size: 13px; font-family: inherit;">
+        <option value="daily_minimum">Média</option>
+        <option value="daily_ideal">Ideal</option>
+        <option value="weekly">Semanal</option>
+      </select>
+      <button class="btn filled" type="submit" style="padding: 8px 16px;">+</button>
+    </form>
+
+    <!-- MÉDIA -->
+    <div class="section-label" style="text-align:left;margin-bottom:16px;">Média</div>
+    <div style="margin-bottom:32px;">
+      {% set minimum_rewards = rewards | selectattr('progress_type', 'equalto', 'daily_minimum') | list %}
+      {% for r in minimum_rewards %}
+      <div class="reward-item"
+        style="display:flex; justify-content:space-between; align-items:center; padding: 12px; border: 2px solid {{ 'var(--primary)' if r.active else 'var(--border)' }}; background: var(--surface2); margin-bottom: 12px; box-shadow: {{ '2px 2px 0 var(--primary)' if r.active else 'none' }};">
+        <div>
+          <div class="title"
+            style="font-weight: 500; font-size: 14px; color: {{ 'var(--primary)' if r.active else 'var(--text)' }};">
+            {{ r.title }}
+            {% if r.active %}
+            <span style="font-size: 11px; font-weight: normal; color: var(--primary); margin-left: 6px;">(ativo)</span>
+            {% endif %}
+          </div>
+          <div class="meta">
+            {% if r.achievements %}
+            {{ r.achievements | length }} vezes · última em {{ r.achievements[-1].achieved_date.strftime('%d/%m/%Y') }}
+            {% else %}
+            Nenhuma conquista ainda
+            {% endif %}
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <a href="{{ url_for('rewards.rewards') if selected_reward and r.id == selected_reward.id else url_for('rewards.rewards', focus_id=r.id) }}"
+            class="btn small ghost {{ 'filled' if selected_reward and r.id == selected_reward.id }}"
+            style="padding: 6px 12px; font-size: 10px;">
+            Detalhes
+          </a>
+          {% if not r.active %}
+          <form method="post" action="{{ url_for('rewards.activate_reward', reward_id=r.id) }}">
+            <button class="btn small" type="submit" style="padding: 6px 12px; font-size: 10px;">Ativar</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% if not minimum_rewards %}
+      <p style="font-size:12px;color:var(--text3);">Nenhuma recompensa cadastrada em Média.</p>
+      {% endif %}
+    </div>
+
+    <!-- IDEAL -->
+    <div class="section-label" style="text-align:left;margin-bottom:16px;">Ideal</div>
+    <div style="margin-bottom:32px;">
+      {% set ideal_rewards = rewards | selectattr('progress_type', 'equalto', 'daily_ideal') | list %}
+      {% for r in ideal_rewards %}
+      <div class="reward-item"
+        style="display:flex; justify-content:space-between; align-items:center; padding: 12px; border: 2px solid {{ 'var(--primary)' if r.active else 'var(--border)' }}; background: var(--surface2); margin-bottom: 12px; box-shadow: {{ '2px 2px 0 var(--primary)' if r.active else 'none' }};">
+        <div>
+          <div class="title"
+            style="font-weight: 500; font-size: 14px; color: {{ 'var(--primary)' if r.active else 'var(--text)' }};">
+            {{ r.title }}
+            {% if r.active %}
+            <span style="font-size: 11px; font-weight: normal; color: var(--primary); margin-left: 6px;">(ativo)</span>
+            {% endif %}
+          </div>
+          <div class="meta">
+            {% if r.achievements %}
+            {{ r.achievements | length }} vezes · última em {{ r.achievements[-1].achieved_date.strftime('%d/%m/%Y') }}
+            {% else %}
+            Nenhuma conquista ainda
+            {% endif %}
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <a href="{{ url_for('rewards.rewards') if selected_reward and r.id == selected_reward.id else url_for('rewards.rewards', focus_id=r.id) }}"
+            class="btn small ghost {{ 'filled' if selected_reward and r.id == selected_reward.id }}"
+            style="padding: 6px 12px; font-size: 10px;">
+            Detalhes
+          </a>
+          {% if not r.active %}
+          <form method="post" action="{{ url_for('rewards.activate_reward', reward_id=r.id) }}">
+            <button class="btn small" type="submit" style="padding: 6px 12px; font-size: 10px;">Ativar</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% if not ideal_rewards %}
+      <p style="font-size:12px;color:var(--text3);">Nenhuma recompensa cadastrada em Ideal.</p>
+      {% endif %}
+    </div>
+
+    <!-- SEMANAL -->
+    <div class="section-label" style="text-align:left;margin-bottom:16px;">Semanal</div>
+    <div style="margin-bottom:32px;">
+      {% set weekly_rewards = rewards | selectattr('progress_type', 'equalto', 'weekly') | list %}
+      {% for r in weekly_rewards %}
+      <div class="reward-item"
+        style="display:flex; justify-content:space-between; align-items:center; padding: 12px; border: 2px solid {{ 'var(--primary)' if r.active else 'var(--border)' }}; background: var(--surface2); margin-bottom: 12px; box-shadow: {{ '2px 2px 0 var(--primary)' if r.active else 'none' }};">
+        <div>
+          <div class="title"
+            style="font-weight: 500; font-size: 14px; color: {{ 'var(--primary)' if r.active else 'var(--text)' }};">
+            {{ r.title }}
+            {% if r.active %}
+            <span style="font-size: 11px; font-weight: normal; color: var(--primary); margin-left: 6px;">(ativo)</span>
+            {% endif %}
+          </div>
+          <div class="meta">
+            {% if r.achievements %}
+            {{ r.achievements | length }} vezes · última em {{ r.achievements[-1].achieved_date.strftime('%d/%m/%Y') }}
+            {% else %}
+            Nenhuma conquista ainda
+            {% endif %}
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <a href="{{ url_for('rewards.rewards') if selected_reward and r.id == selected_reward.id else url_for('rewards.rewards', focus_id=r.id) }}"
+            class="btn small ghost {{ 'filled' if selected_reward and r.id == selected_reward.id }}"
+            style="padding: 6px 12px; font-size: 10px;">
+            Detalhes
+          </a>
+          {% if not r.active %}
+          <form method="post" action="{{ url_for('rewards.activate_reward', reward_id=r.id) }}">
+            <button class="btn small" type="submit" style="padding: 6px 12px; font-size: 10px;">Ativar</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% if not weekly_rewards %}
+      <p style="font-size:12px;color:var(--text3);">Nenhuma recompensa cadastrada em Semanal.</p>
+      {% endif %}
+    </div>
+
+
+
+    <!-- DETALHES -->
+    {% if selected_reward %}
+    <div class="section-label" style="text-align:left;margin:32px 0 12px 0;">Detalhes da Recompensa</div>
+    <div class="reward-details-panel"
+      style="border: 2px solid var(--text); padding: 18px; background: var(--surface2); box-shadow: var(--shadow); margin-bottom: 24px;">
+      <div style="font-size: 16px; font-weight: 600; font-family: 'Lora', serif; margin-bottom: 4px;">{{
+        selected_reward.title }}</div>
+      <div
+        style="font-size: 11px; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; letter-spacing: 0.05em;">
+        Tipo:
+        {% if selected_reward.progress_type == 'daily_minimum' %}
+        Média
+        {% elif selected_reward.progress_type == 'daily_ideal' %}
+        Ideal
+        {% elif selected_reward.progress_type == 'weekly' %}
+        Semanal
+        {% endif %}
+      </div>
+
+      <div style="font-size: 13px; color: var(--text2); margin-bottom: 16px;">
+        <div><strong>Total de conquistas:</strong> {{ selected_reward.achievements | length }}</div>
+        <div>
+          <strong>Última conquista:</strong>
+          {% if selected_reward.achievements %}
+          {{ selected_reward.achievements[-1].achieved_date.strftime('%d/%m/%Y') }}
+          {% else %}
+          Nenhuma conquista registrada
+          {% endif %}
+        </div>
+      </div>
+
+      {% if selected_reward.achievements %}
+      <div style="margin-bottom: 16px;">
+        <div
+          style="font-size: 11px; text-transform: uppercase; color: var(--text3); font-weight: 500; margin-bottom: 6px;">
+          Histórico de Conquistas</div>
+        <div
+          style="max-height: 120px; overflow-y: auto; border: 1px solid var(--border); padding: 8px; background: var(--surface); font-size: 12px;">
+          {% for a in selected_reward.achievements | reverse %}
+          <div style="margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--border);">
+            Conquistado em {{ a.achieved_date.strftime('%d/%m/%Y') }}
+            {% if a.start_date and a.end_date %}
+            ({{ a.start_date.strftime('%d/%m') }} a {{ a.end_date.strftime('%d/%m') }})
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <div style="border-top: 2px solid var(--text); padding-top: 14px; margin-top: 14px;">
+        <form method="post" action="{{ url_for('rewards.edit_reward', reward_id=selected_reward.id) }}">
+          <div class="field" style="margin-bottom: 10px;">
+            <label
+              style="font-size: 10px; font-weight: 500; text-transform: uppercase; color: var(--text3); display: block; margin-bottom: 6px;">Editar
+              título</label>
+            <input type="text" name="title" value="{{ selected_reward.title }}" required
+              style="width: 100%; border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 8px; font-size: 13px;">
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button class="btn small filled" type="submit">Salvar Alterações</button>
+          </form>
+          <form method="post" action="{{ url_for('rewards.delete_reward', reward_id=selected_reward.id) }}"
+            onsubmit="return confirm('Excluir a recompensa "{{ selected_reward.title }}"? Esta ação não pode ser desfeita.')">
+            <button class="btn small" type="submit"
+              style="border-color: #c0392b; color: #c0392b;">Excluir</button>
+          </form>
+          </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div><!-- fim coluna esquerda -->
+
+  <!-- COLUNA DIREITA: Wishlist + Horizonte -->
+  <div>
+    <div class="section-label" style="text-align:left;margin-bottom:16px;">Wishlist</div>
+
+    <!-- 1. Barra de pesquisa/criação no topo -->
+    <form class="inline" method="post" action="{{ url_for('rewards.add_wishlist_item') }}" style="margin-bottom: 24px; justify-content: flex-start; gap: 8px;">
+      <input type="text" name="title" placeholder="título..." required style="flex: 1; border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 8px; font-size: 13px;">
+      <input type="number" name="suggested_goal" placeholder="ciclos" required style="width: 100px; border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 8px; font-size: 13px;">
+      <button class="btn filled" type="submit" style="padding: 8px 16px;">+</button>
+    </form>
+
+    <!-- 2. Objetivo de longo prazo ("Horizonte") ativo -->
+    {% if absolute %}
+    <div class="section-label" style="text-align:left;margin-bottom:12px;">Objetivo Absoluto Ativo</div>
+    <div class="barblock" style="width:100%; max-width:100%; margin:0 0 28px 0;">
+      <div class="barlabel"><span>{{ absolute.title }}</span><span class="barvalue">{{ absolute.current_count }} / {{ absolute.goal_cycles }}</span></div>
+      <div class="bartrack">
+        <div class="barfill" style="width:{{ (100*absolute.current_count/absolute.goal_cycles) | round | int }}%"></div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 3. Demais itens da Wishlist ordenados do menor para o maior em ciclos -->
+    <div class="section-label" style="text-align:left;margin-bottom:12px;">Itens da Wishlist</div>
+    {% for item in wishlist | sort(attribute='suggested_goal') %}
+    <div class="wishlist-row">
+      <div>
+        <div style="font-size:13px;font-weight:500;">{{ item.title }}</div>
+        <div style="font-size:11px;color:var(--text3);">{{ item.suggested_goal }} ciclos</div>
+      </div>
+      <form method="post" action="{{ url_for('rewards.activate', item_id=item.id) }}">
+        <button class="btn small" type="submit" {{ 'disabled' if absolute }}>ATIVAR</button>
+      </form>
+    </div>
+    {% endfor %}
+    {% if not wishlist %}
+    <p style="font-size:12px;color:var(--text3);">Wishlist vazia — adicione itens acima.</p>
+    {% endif %}
+  </div><!-- fim coluna direita -->
+
+</div><!-- fim settings-grid -->
+{% endblock %}

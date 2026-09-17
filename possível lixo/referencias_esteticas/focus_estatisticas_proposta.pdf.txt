@@ -1,0 +1,678 @@
+--- PAGE 1
+F O C U S
+E S T A T Í S T I C A S — P R O P O S T A D E D E S I G N
+Um único calendário.
+Todo o histórico.
+Nada escondido, nada exposto demais.
+01 / 24
+C A L E N D Á R I O + A R Q U I V O H I S T Ó R I C O + F E R R A M E N T A D E A N Á L I S E
+Proposta visual e conceitual para a nova página Estatísticas: um calendário histórico navegável
+— dia, semana e mês — com detalhamento sob demanda e um modo de comparação entre
+quaisquer dois períodos. Referência de design, sem especificação de código.
+
+--- PAGE 2
+01
+01 — C O NC E I T O
+Visão geral da página
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+A página tem duas partes. Um cabeçalho compacto — a
+evolução do que já existe hoje — e um corpo dominado por um
+calendário histórico grande, contínuo, inspirado no princípio do
+GitHub Contribution Graph, mas usado como interface de
+navegação, não só como decoração.
+A ideia central: o calendário mostra o histórico inteiro de forma
+compacta; selecionar uma região dele revela os dados detalhados
+daquela região. O usuário nunca precisa sair da página para explorar
+um dia, uma semana ou um mês específico.
+CALENDÁRIO COMO ÍNDICE
+NÃO É DASHBOARD
+CABEÇALHO — DIA / SEMANA / MÊS
+↓
+CALENDÁRIO HISTÓRICO — CORPO PRINCIPAL
+proporção aproximada: cabeçalho ocupa uma fração pequena da tela; o
+calendário domina.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+01 / 24
+
+--- PAGE 3
+02
+02 — CABEÇ A L HO
+Cabeçalho — Dia / Semana / Mês
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+DIA
+SEMANA
+MÊS
+CICLOS
+8
++1 vs. ontem
+MINUTOS
+5h20
++12,4% vs. ontem
+EXTRAORDINÁRIOS
++2
+—
+MELHOR SEQUÊNCIA
+6 dias
+recorde: 11
+Ao trocar a aba para SEMANA ou MÊS, os mesmos quatro espaços mudam de conteúdo e de comparação (semana vs. semana
+anterior, mês vs. mês anterior) — a estrutura do cabeçalho não muda, só a janela temporal e o "vs." correspondente.
+POR QUE TRÊS ABAS
+Hoje a página só mostra um período de
+cada vez. Adicionar DIA como opção
+formaliza o que o calendário já vai deixar
+implícito: o dia é a unidade atômica de
+tudo — a semana e o mês são apenas
+agregações dele.
+Recompensas, melhor dia, contexto de
+configuração e comparação com o
+período anterior continuam existindo — só
+passam a responder à aba ativa.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+02 / 24
+
+--- PAGE 4
+03
+03 — CO RPO P RI N CI P A L
+Calendário histórico — visão geral
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+O calendário ocupa a maior parte da largura da página — quase um ano de atividade visível de uma
+vez, sem paginação, sem scroll interno. É o elemento dominante da tela, do mesmo jeito que o
+cronômetro domina a Home.
+CICLOS
+MINUTOS
+SEM ATIVIDADE
+ATIVIDADE INTENSA
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+03 / 24
+
+--- PAGE 5
+04
+04 — CO RP O P RI NC I P A L
+Sistema de intensidade
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+CINCO ESTADOS POSSÍVEIS POR CÉLULA
+Sem sessão — nenhum dado inventado, célula com contorno pontilhado sutil
+Atividade baixa
+Atividade média
+Atividade alta
+Atividade excepcional — contorno dourado indica ciclos extraordinários naquele dia
+CICLOS ↔ MINUTOS CONTINUAM DISTINTOS
+O switch CICLOS/MINUTOS no topo (página anterior) muda qual
+métrica define a intensidade — mas a métrica que não está ativa
+nunca desaparece: ela fica disponível no painel de detalhe ao
+selecionar o dia (página 07). A intensidade nunca mistura as duas
+métricas numa fórmula só — é sempre uma ou outra, nunca uma
+média das duas.
+O contorno dourado (extraordinário) é independente do nível de
+intensidade — um dia pode ter intensidade baixa em minutos
+totais e ainda assim ter tido ciclos extraordinários, se a meta ideal
+daquele dia era pequena.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+04 / 24
+
+--- PAGE 6
+05
+05 — CO RPO P RI N C I P A L
+Sistema de navegação temporal
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+REPOUSO — SEM LEGENDAS
+MOUSE PRÓXIMO AO TOPO → MESES APARECEM
+JUN
+JUL
+AGO
+Números de semana, nomes de mês e rótulos de dia da semana
+ficam ocultos por padrão. Aproximar o mouse do topo do
+calendário revela os meses; aproximar da lateral esquerda revela
+a numeração das semanas. As células continuam sendo o
+elemento visualmente dominante — a referência temporal se
+descobre, não se impõe (o mesmo princípio já usado no sistema
+de contexto da Home).
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+05 / 24
+
+--- PAGE 7
+06
+06 — IN TERA Ç Ã O
+Seleção de um dia
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+Clicar em uma célula seleciona aquele dia — a célula ganha um contorno claro e
+um painel se abre à direita do calendário, sem trocar de página, sem modal.
+DIA SELECIONADO
+23/08/2026
+Ciclos
+8
+Minutos focados
+4h40
+Extraordinários
++2
+Este painel é só a ponta — a página seguinte mostra o detalhamento
+completo que ele pode conter.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+06 / 24
+
+--- PAGE 8
+07
+07 — PAIN E L DO D I A
+Detalhamento completo do dia
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+SESSÃO
+Data
+23/08/2026
+Sessões iniciadas
+2
+Primeira sessão
+09:14
+CICLOS DE FOCO
+Quantidade
+8
+Minutos de foco
+4h40
+EXTRAORDINÁRIOS
+Quantidade
++2
+Minutos
+90
+DESCANSOS CURTOS
+Quantidade
+6
+Minutos
+30
+DESCANSOS LONGOS
+Quantidade
+2
+Minutos
+40
+DIA SEM SESSÃO — EXEMPLO ALTERNATIVO
+"Nenhuma atividade registrada neste dia."
+Nenhum campo numérico é exibido — só esta linha.
+PRINCÍPIO
+Este painel mostra dados brutos do registro, não
+estatística derivada — é uma ferramenta de auditoria:
+"o que exatamente aconteceu neste dia", célula por
+célula do banco de dados, sem arredondar ou
+agregar nada além do que o próprio dia já contém.
+Quantidade e duração aparecem sempre juntas,
+nunca uma no lugar da outra — o mesmo princípio
+das barras da Home.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+07 / 24
+
+--- PAGE 9
+08
+08 — P AI NE L D O DI A
+Contexto da sessão
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+UM DIA, UMA CONFIGURAÇÃO
+CONTEXTO VIGENTE — 09:14 → 15:30
+Foco
+35 min
+Pausa curta
+5 min
+Pausa longa
+20 min
+Meta mínima
+6 ciclos
+Meta ideal
+8 ciclos
+Meta semanal
+36 ciclos
+"Este conjunto de ciclos aconteceu sob esta configuração" — nunca uma configuração
+média, nunca a configuração de hoje.
+QUANDO O DIA TEM MAIS DE UM CONTEXTO
+CONTEXTO A — 09:14 → 12:00 (5 CICLOS)
+Foco
+35 min
+CONTEXTO B — 15:30 → 18:10 (3 CICLOS)
+Foco
+45 min
+Se a configuração mudou no meio do dia, os dois contextos aparecem separados,
+cada um com os ciclos que efetivamente pertencem a ele — nunca misturados
+numa configuração única "representativa" do dia.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+08 / 24
+
+--- PAGE 10
+09
+09 — PAIN E L DO D I A
+Títulos registrados nos ciclos
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+CICLO → DESCRIÇÃO DO QUE FOI FEITO
+Cada ciclo concluído pode ter um texto livre e opcional ("o que
+você fez?"). A quantidade de registros nunca é maior que a
+quantidade de ciclos completos do dia — pode ser menor, inclusive
+zero.
+Na visualização temporal, ciclos sem anotação aparecem como
+uma linha discreta e itálica ("sem anotação"), nunca omitidos —
+omitir quebraria a contagem visível de ciclos daquele dia.
+Isto transforma o calendário em algo mais que um gráfico: ele se
+torna uma porta de entrada para a memória do trabalho
+realizado, dia a dia.
+CICLO · 09:14
+Estudei harmonia funcional
+CICLO · 09:55
+Transcrevi o solo
+CICLO · 10:40
+sem anotação
+CICLO · 11:20
+Organizei os arquivos do repertório
+CICLO · 15:30
+sem anotação
+CICLO · 16:10
+Revisei a digitação do trecho B
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+09 / 24
+
+--- PAGE 11
+10
+1 0 — P AI NEL DO D I A
+Recompensas e metas do dia
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+MÍNIMO
+Título vigente
+"30 min de videogame"
+Ciclos computados
+8 / 6
+Concluída
+sim
+IDEAL
+Título vigente
+"1h de videogame"
+Ciclos computados
+8 / 8
+Concluída
+sim
+SEMANAL
+Título vigente
+"Praia"
+Ciclos computados (semana)
+31 / 36
+Concluída
+ainda não
+CONTRIBUIÇÃO DESTE DIA
+Ciclos que contaram p/ semana
+8
+ABSOLUTO — MP3
+Estado inicial do dia
+734 / 1000
+Estado final do dia
+742 / 1000
+(faixa dourada ampliada para leitura — proporção real: +8 em 1000)
+progressão do dia: +8 ciclos
+Não é só "concluído / não concluído" — o absoluto
+registra início e fim do dia, permitindo reconstruir a
+progressão real. A informação vem do fechamento da
+sessão, nunca de consultar a wishlist depois — esse é
+o dado histórico confiável.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+10 / 24
+
+--- PAGE 12
+11
+1 1 — P AI NEL DO DI A
+To-do do dia
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+10
+ITENS
+·
+8
+CONCLUÍDOS
+· 80%
+DERIVADO
+Os dois primeiros números — 10 e 8 — são dados brutos, registrados no dia. O terceiro — 80% — é
+sempre exibido com peso visual menor e o rótulo "derivado", para deixar claro que é uma taxa
+calculada, não um fato armazenado. O máximo de itens por dia é 15.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+11 / 24
+
+--- PAGE 13
+12
+1 2 — PAIN EL DO D I A
+Água do dia
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+REALIZADO VS. META
+Total consumido
+1,8 L
+Meta configurada
+2,5 L
+CONTEXTO — DADOS BRUTOS
+Capacidade da garrafa
+600 ml
+Garrafas registradas
+3
+"1,8 L / 2,5 L" é a leitura rápida; capacidade e contagem
+de garrafas continuam disponíveis logo abaixo, sem
+precisar de outra tela.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+12 / 24
+
+--- PAGE 14
+13
+1 3 — INT ERA Ç ÃO
+Seleção de uma semana
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+No calendário, uma coluna é uma semana. Clicar no topo da coluna (ou numa
+área dedicada acima dela) seleciona os sete dias inteiros como um único período.
+SEMANA SELECIONADA
+Semana 34 · 17—23/08
+Ciclos totais
+38
+Minutos totais
+22h10
+Dias ativos
+6 / 7
+Média diária
+6,3 ciclos
+Extraordinários
++7
+DESTAQUES DA SEMANA
+Melhor dia: 23/08 (8 ciclos)
+Dia sem sessão: 19/08
+Ciclos totais, minutos totais e dias ativos são somados dos sete daily da
+semana; melhor dia e dias sem sessão são observações derivadas dessa
+coleção — não dados novos.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+13 / 24
+
+--- PAGE 15
+14
+1 4 — IN TERA Ç Ã O
+Seleção de um mês
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+Um bloco de colunas (as semanas que compõem um mês) representa o mês.
+Clicar na faixa de mês, revelada no hover do topo (página 05), seleciona o bloco
+inteiro.
+MÊS SELECIONADO
+Agosto 2026
+Ciclos totais
+164
+Minutos totais
+98h40
+Dias ativos
+24 / 31
+Média diária (todo o mês)
+5,3 ciclos
+Média nos dias ativos
+6,8 ciclos
+As duas médias coexistem de propósito — "por dia do mês" e "por dia em que
+houve atividade" respondem perguntas diferentes, e nenhuma substitui a
+outra.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+14 / 24
+
+--- PAGE 16
+15
+1 5 — CO NCEI T O
+Hierarquia Dia → Semana → Mês
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+CÉLULA
+um quadrado
+= um dia
+→
+COLUNA
+sete dias
+= uma semana
+→
+BLOCO
+semanas do mês
+= um mês
+O mesmo objeto visual — o calendário — funciona simultaneamente como visualização, índice temporal e ferramenta de seleção.
+Não existem três telas diferentes para dia, semana e mês: existe um painel lateral que se adapta ao nível selecionado, sempre no
+mesmo lugar da tela.
+SELECIONA
+PAINEL RESPONDE
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+15 / 24
+
+--- PAGE 17
+16
+1 6 — C O M PA RA ÇÃ O
+Modo Comparar Períodos
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+EXPLORAR
+COMPARAR
+Um segundo modo, ativado por um toggle discreto no cabeçalho. Ao entrar em Comparar, o calendário
+permanece visível, mas cada seleção passa a preencher um dos dois "slots" de comparação em vez de abrir
+um painel único.
+PERÍODO A — CLIQUE PARA
+ESCOLHER
+×
+PERÍODO B — CLIQUE PARA
+ESCOLHER
+Qualquer combinação é permitida — dia × dia, semana × semana, mês × mês, ou até dia × semana. O
+sistema não impõe que os dois períodos sejam do mesmo tipo.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+16 / 24
+
+--- PAGE 18
+17
+1 7 — C O M PA RA Ç ÃO
+Comparação Dia × Dia
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+PERÍODO A
+23/08/2026
+Ciclos
+8
+Minutos
+4h40
+Descansos curtos
+6
+Descansos longos
+2
+Extraordinários
++2
+Água
+1,8 L
+To-do
+8/10 · 80%
+Recompensas
+2
+PERÍODO B
+15/08/2026
+Ciclos
+5
+Minutos
+2h55
+Descansos curtos
+4
+Descansos longos
+1
+Extraordinários
++0
+Água
+1,2 L
+To-do
+4/6 · 67%
+Recompensas
+1
+Contexto/configuração, títulos registrados nos ciclos e o estado das quatro metas também entram na comparação (abaixo da
+tabela, não mostrado aqui por espaço) — o objetivo é responder, de forma direta: o que mudou entre esses dois dias?
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+17 / 24
+
+--- PAGE 19
+18
+1 8 — CO MP ARA Ç Ã O
+Comparação Semana × Semana · Mês × Mês
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+SEMANA 34
+17—23/08
+Ciclos totais
+38
+Minutos totais
+22h10
+Dias ativos
+6/7
+Extraordinários
++7
+SEMANA 33
+10—16/08
+Ciclos totais
+32
+Minutos totais
+18h40
+Dias ativos
+5/7
+Extraordinários
++3
+AGOSTO 2026
+mês corrente
+Ciclos totais
+164
+Dias ativos
+24/31
+Média nos dias ativos
+6,8
+JULHO 2026
+mês anterior
+Ciclos totais
+141
+Dias ativos
+22/31
+Média nos dias ativos
+6,4
+Mesma estrutura visual da comparação diária — o painel só troca a granularidade dos números (totais e médias de período em
+vez de contagens de um único dia).
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+18 / 24
+
+--- PAGE 20
+19
+1 9 — C AMADA DE A NÁ L I S E
+Estatísticas derivadas
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+O daily guarda os fatos; esta camada calcula, sob demanda, o que pode ser útil interpretar a partir deles. Nenhuma dessas
+métricas é armazenada — todas nascem de uma consulta sobre os registros brutos já mostrados nas páginas anteriores. Elas só
+aparecem quando o contexto pede (dentro de um painel de dia/semana/mês ou de uma comparação) — nunca todas juntas,
+sempre um subconjunto pequeno e relevante.
+Produtividade
+ciclos/dia · minutos/dia · média · distribuição da
+atividade
+Comparação
+diferença absoluta · diferença % · evolução vs.
+período anterior
+Consistência
+dias ativos · sequência ativa · frequência de sessões
+Extraordinários
+quantidade · minutos · participação sobre o total
+Descanso
+quantidade · minutos · relação foco/descanso
+Metas
+vezes concluída · taxa de conclusão · títulos vigentes
+· frequência
+To-do
+itens · concluídos · taxa de conclusão · média no
+período
+Água
+total · média diária · relação com a meta · dias
+registrados
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+19 / 24
+
+--- PAGE 21
+20
+20 — CAM AD A S EC UN DÁ R I A
+Destaques e fatos interessantes
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+Melhor dia do mês: 23/08 · 8 ciclos
+Maior sequência: 11 dias
+Semana mais consistente: Semana 31
+Título mais recorrente: "revisão de repertório"
+Maior taxa de conclusão da to-do: 100% em 6 dias
+Tratados como notas de rodapé, não como cartões — mesmo estilo tipográfico do texto corrido, um pequeno
+marcador circular à esquerda, sem ícones ilustrativos, sem cor de destaque exagerada. A página prioriza
+exploração dos dados, não celebração deles.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+20 / 24
+
+--- PAGE 22
+21
+21 — C ASO S D E BO RD A
+Estados vazios / dias sem sessão
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+Dias sem nenhuma sessão registrada aparecem com uma célula neutra e
+discreta — nunca cinza-escuro igual ao nível zero de atividade, para não
+confundir "atividade mínima registrada" com "nada foi registrado".
+AO SELECIONAR UM DIA VAZIO
+19/08/2026
+"Nenhuma atividade registrada neste dia."
+Nenhum número zerado é inventado — mínimo, ideal, extraordinário, to-do e
+água simplesmente não aparecem, em vez de mostrar "0 / 0" para tudo. O
+painel se limita a confirmar a ausência.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+21 / 24
+
+--- PAGE 23
+22
+22 — P RIN CÍ P I O
+Uma regra fundamental de design
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+ESTADO INICIAL
+só o calendário.
+padrões e continuidade.
+→
+SELECIONA UM DIA
+painel de detalhe
+daquele dia
+→
+SELECIONA SEMANA/MÊS
+painel consolidado
+do período
+→
+ATIVA COMPARAR
+dois painéis
+lado a lado
+A complexidade inteira descrita neste documento — contexto, metas, to-do, água, títulos, comparação — existe, mas não está
+visível por padrão. Ela se revela em camadas, uma seleção de cada vez. O estado de repouso da página é só o calendário:
+silencioso, denso de informação, mas sem nenhum número na tela até o usuário pedir por ele.
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+22 / 24
+
+--- PAGE 24
+23
+23 — C O M P OS I ÇÃ O
+Visão final da página completa
+FOCUS
+/ ESTATÍSTICAS — PROPOSTA
+DIA
+SEMANA
+MÊS
+EXPLORAR
+CICLOS
+MINUTOS
+CICLOS
+38
++18,7%
+SELECIONADO
+Semana 34
+Ciclos totais
+38
+Minutos totais
+22h10
+Dias ativos
+6/7
+Extraordinários
++7
+FOCUS — PROPOSTA DE DESIGN: PÁGINA ESTATÍSTICAS
+23 / 24

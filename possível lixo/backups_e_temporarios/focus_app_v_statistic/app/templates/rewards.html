@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">Recompensas</div>
+
+<div class="settings-grid">
+  <div>
+    <div class="section-label" style="text-align:left;margin-bottom:16px;">Conquistadas</div>
+    {% for r in rewards %}
+      {% if r.achievements %}
+      <div class="reward-item">
+        <div class="title">{{ r.title }}</div>
+        <div class="meta">{{ r.achievements | length }} vezes · última em {{ r.achievements[-1].achieved_date }}</div>
+      </div>
+      {% endif %}
+    {% endfor %}
+    {% if not rewards %}
+    <p style="font-size:12px;color:var(--text3);">Nenhuma recompensa cadastrada ainda — adicione em Configurações.</p>
+    {% endif %}
+
+    {% if absolute %}
+    <div class="section-label" style="text-align:left;margin:32px 0 12px 0;">Objetivo absoluto ativo</div>
+    <div class="barblock" style="width:100%;max-width:320px;margin-left:0;">
+      <div class="barlabel"><span>{{ absolute.title }}</span><span class="barvalue">{{ absolute.current_count }} / {{ absolute.goal_cycles }}</span></div>
+      <div class="bartrack"><div class="barfill" style="width:{{ (100*absolute.current_count/absolute.goal_cycles) | round | int }}%"></div></div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div>
+    <div class="section-label" style="text-align:left;margin-bottom:16px;">Wishlist</div>
+    {% for item in wishlist %}
+    <div class="wishlist-row">
+      <div>
+        <div style="font-size:13px;font-weight:500;">{{ item.title }}</div>
+        <div style="font-size:11px;color:var(--text3);">{{ item.suggested_goal }} ciclos</div>
+      </div>
+      <form method="post" action="{{ url_for('rewards.activate', item_id=item.id) }}">
+        <button class="btn small" type="submit" {{ 'disabled' if absolute }}>ATIVAR</button>
+      </form>
+    </div>
+    {% endfor %}
+    {% if not wishlist %}
+    <p style="font-size:12px;color:var(--text3);">Wishlist vazia — adicione itens em Configurações.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

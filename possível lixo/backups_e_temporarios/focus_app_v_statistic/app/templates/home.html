@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="home-stack">
+
+  <div class="section-label home-group-label">HOJE</div>
+
+  <div class="barblock">
+    <div class="barlabel"><span>Mínimo</span><span class="barvalue">{{ daily_min.current_count }} / {{ daily_min.goal }}</span></div>
+    <div class="bartrack"><div class="barfill" style="width:{{ daily_min.pct }}%"></div></div>
+  </div>
+
+  <div class="barblock">
+    <div class="barlabel"><span>Ideal</span><span class="barvalue">{{ daily_ideal.current_count }} / {{ daily_ideal.goal }}</span></div>
+    <div class="bartrack"><div class="barfill" style="width:{{ daily_ideal.pct }}%"></div></div>
+  </div>
+
+  {% if extra %}
+  <div class="extra-block" id="extra-block">
+    <div class="barlabel"><span style="color:var(--extra)">Extraordinário</span><span class="barvalue">+{{ extra.extra_cycles }}</span></div>
+    <div class="bartrack"><div class="barfill extra" id="extra-fill" style="width:{{ [100, extra.extra_cycles * 15] | min }}%"></div></div>
+  </div>
+  {% else %}
+  <div class="extra-hint" id="extra-hint">extraordinário surge ao completar mínimo + ideal</div>
+  <div class="extra-block" id="extra-block" style="display:none;">
+    <div class="barlabel"><span style="color:var(--extra)">Extraordinário</span><span class="barvalue" id="extra-value">+0</span></div>
+    <div class="bartrack"><div class="barfill extra" id="extra-fill" style="width:0%"></div></div>
+  </div>
+  {% endif %}
+
+  <div class="section-label home-group-label">SEMANA</div>
+  <div class="barblock">
+    <div class="barlabel"><span>Semanal</span><span class="barvalue">{{ weekly.current_count }} / {{ weekly.goal }}</span></div>
+    <div class="bartrack"><div class="barfill" style="width:{{ weekly.pct }}%"></div></div>
+  </div>
+
+  <div class="section-label home-group-label">OBJETIVO{% if absolute %} — {{ absolute.title | upper }}{% endif %}</div>
+  {% if absolute %}
+  <div class="barblock">
+    <div class="barlabel"><span>Absoluto</span><span class="barvalue">{{ absolute.current_count }} / {{ absolute.goal_cycles }}</span></div>
+    <div class="bartrack"><div class="barfill" style="width:{{ (100 * absolute.current_count / absolute.goal_cycles) | round | int }}%"></div></div>
+  </div>
+  {% else %}
+  <p style="text-align:center;font-size:12px;color:var(--text3);max-width:320px;margin:0 auto 34px auto;">
+    Nenhum objetivo absoluto ativo. Escolha um na <a href="{{ url_for('rewards.rewards') }}" style="color:var(--primary);text-decoration:underline;">wishlist</a>.
+  </p>
+  {% endif %}
+
+  <div class="timer-wrap">
+    <div class="timer-state" id="timer-state">IDLE</div>
+    <div class="num timer-num" id="timer-display">{{ '%02d:00' % cfg.focus_minutes }}</div>
+    <div class="timer-actions" id="timer-actions">
+      <button class="btn filled" id="btn-start">INICIAR</button>
+    </div>
+    <div class="post-cycle-msg" id="post-cycle-msg"></div>
+    <div class="post-cycle-msg" id="timer-error" style="color:var(--alert);"></div>
+  </div>
+
+  <div style="margin-top:44px;display:flex;gap:10px;align-items:center;">
+    <span class="section-label" style="margin:0;">ÁGUA HOJE: <span class="num" style="font-size:13px;">{{ water.total_l }} L</span></span>
+    <button class="btn small ghost" id="btn-water">+1 GARRAFA</button>
+  </div>
+
+  <div class="calendar-wrap" id="calendar-wrap">
+    <div class="calendar-head">
+      <span class="section-label" style="text-align:left;">Atividade</span>
+      <div>
+        <button class="tag on" data-mode="cycles">CICLOS</button>
+        <button class="tag" data-mode="minutes">MINUTOS</button>
+      </div>
+    </div>
+    <div class="heatmap" id="heatmap"></div>
+    <div class="heatmap-legend">
+      <span>MENOS</span>
+      <div class="hcell l0"></div><div class="hcell l1"></div><div class="hcell l2"></div><div class="hcell l3"></div><div class="hcell l4"></div>
+      <span>MAIS</span>
+    </div>
+  </div>
+</div>
+
+<!-- modal pós-ciclo -->
+<div class="modal-overlay" id="post-cycle-modal">
+  <div class="modal">
+    <div class="section-label">CICLO CONCLUÍDO</div>
+    <label style="font-size:13px;font-weight:300;">O que você fez?</label>
+    <input type="text" id="cycle-title" placeholder="opcional">
+    <button class="btn filled" id="btn-conclude" style="width:100%;">CONCLUIR</button>
+    <div class="modal-message" id="modal-message"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.FOCUS_STATE = {
+    focusMinutes: {{ cfg.focus_minutes }},
+    shortBreakMinutes: {{ cfg.short_break_minutes }},
+    longBreakMinutes: {{ cfg.long_break_minutes }},
+    cyclesPerSession: {{ cfg.cycles_per_session }},
+    dailyIdealGoal: {{ daily_ideal.goal }},
+    dailyIdealCurrent: {{ daily_ideal.current_count }},
+    extraordinaryUnlocked: {{ 'true' if extra else 'false' }}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+<script src="{{ url_for('static', filename='js/water.js') }}"></script>
+{% endblock %}

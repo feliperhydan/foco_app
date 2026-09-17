@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">Estatísticas</div>
+
+<div class="period-nav">
+  <div class="scale-tabs">
+    <a href="{{ url_for('stats.stats', scale='day') }}" class="tag {{ 'on' if scale=='day' }}">DIA</a>
+    <a href="{{ url_for('stats.stats', scale='week') }}" class="tag {{ 'on' if scale=='week' }}">SEMANA</a>
+    <a href="{{ url_for('stats.stats', scale='month') }}" class="tag {{ 'on' if scale=='month' }}">MÊS</a>
+  </div>
+  <div class="walker">
+    <a href="{{ url_for('stats.stats', scale=scale, date=prev_ref, section=section) }}">←</a>
+    <span class="period-label">{{ period_label }}{% if is_current_period %}<span class="badge">ATUAL</span>{% endif %}</span>
+    <a href="{{ url_for('stats.stats', scale=scale, date=next_ref, section=section) }}" class="{{ 'disabled' if next_disabled }}">→</a>
+  </div>
+</div>
+
+<div class="stat-grid" style="grid-template-columns:repeat(2,1fr);">
+  <div class="stat-card">
+    <div class="label">Ciclos</div>
+    <div class="value num">{{ comparison.cycles.b }}</div>
+    {% if comparison.cycles.pct is not none %}
+    <div class="compare-line">
+      <span class="pct {{ 'up' if comparison.cycles.pct > 0 else ('down' if comparison.cycles.pct < 0 else 'flat') }}">{{ '+' if comparison.cycles.pct > 0 }}{{ comparison.cycles.pct }}%</span>
+      <span>vs. {{ comparison.cycles.a }} no período anterior</span>
+    </div>
+    {% endif %}
+  </div>
+  <div class="stat-card">
+    <div class="label">Minutos focados</div>
+    <div class="value num">{{ (comparison.minutes.b // 60) }}h{{ '%02d' % (comparison.minutes.b % 60) }}</div>
+    {% if comparison.minutes.pct is not none %}
+    <div class="compare-line">
+      <span class="pct {{ 'up' if comparison.minutes.pct > 0 else ('down' if comparison.minutes.pct < 0 else 'flat') }}">{{ '+' if comparison.minutes.pct > 0 }}{{ comparison.minutes.pct }}%</span>
+      <span>vs. {{ (comparison.minutes.a // 60) }}h{{ '%02d' % (comparison.minutes.a % 60) }} no período anterior</span>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="section-tabs">
+  <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='raw') }}" class="tag {{ 'on' if section=='raw' }}">DADOS BRUTOS</a>
+  <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='contexts') }}" class="tag {{ 'on' if section=='contexts' }}">CONTEXTOS</a>
+  {% if scale == 'day' %}
+  <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='timeline') }}" class="tag {{ 'on' if section=='timeline' }}">TIMELINE</a>
+  {% endif %}
+  <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='todo_water') }}" class="tag {{ 'on' if section=='todo_water' }}">TO-DO &amp; ÁGUA</a>
+  <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='rewards') }}" class="tag {{ 'on' if section=='rewards' }}">RECOMPENSAS</a>
+</div>
+
+{% if scale == 'day' and current.empty %}
+  <p class="empty-note">Nenhuma atividade registrada neste dia.</p>
+{% else %}
+
+  {# ============================== DADOS BRUTOS ============================== #}
+  {% if section == 'raw' %}
+    {% if scale == 'day' %}
+    <div class="raw-grid">
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">SESSÃO</div>
+          <div class="kv-row"><span class="kv-k">Data</span><span class="kv-v">{{ current.date }}</span></div>
+          {% if current.session %}
+          <div class="kv-row"><span class="kv-k">Início</span><span class="kv-v">{{ current.session.started_at[11:16] if current.session.started_at else '—' }}</span></div>
+          {% endif %}
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">CICLOS DE FOCO</div>
+          {% set focus_c = current.cycle_contexts | sum(attribute='focus.cycles_completed') %}
+          {% set focus_m = current.cycle_contexts | sum(attribute='focus.minutes_completed') %}
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ focus_c }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos de foco</span><span class="kv-v">{{ focus_m }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">DESCANSO CURTO</div>
+          {% set rs_c = current.cycle_contexts | sum(attribute='rest_short.cycles_completed') %}
+          {% set rs_m = current.cycle_contexts | sum(attribute='rest_short.minutes_completed') %}
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ rs_c }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v">{{ rs_m }}</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">DESCANSO LONGO</div>
+          {% set rl_c = current.cycle_contexts | sum(attribute='rest_long.cycles_completed') %}
+          {% set rl_m = current.cycle_contexts | sum(attribute='rest_long.minutes_completed') %}
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ rl_c }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v">{{ rl_m }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">EXTRAORDINÁRIOS</div>
+          {% set ex_c = current.cycle_contexts | sum(attribute='extraordinary.cycles') %}
+          {% set ex_m = current.cycle_contexts | sum(attribute='extraordinary.minutes') %}
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v extra">+{{ ex_c }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v extra">{{ ex_m }}</span></div>
+        </div>
+      </div>
+    </div>
+
+    {% else %}
+    {# semana / mês: totals já vem agregado do Week/Month #}
+    <div class="raw-grid">
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">CICLOS DE FOCO</div>
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ current.totals.focus.cycles_completed }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos de foco</span><span class="kv-v">{{ current.totals.focus.minutes_completed }}</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">DIAS DO PERÍODO</div>
+          <div class="kv-row"><span class="kv-k">Dias com Daily registrado</span><span class="kv-v">{{ current.days | length }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">DESCANSO CURTO</div>
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ current.totals.rest_short.cycles_completed }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v">{{ current.totals.rest_short.minutes_completed }}</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">DESCANSO LONGO</div>
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ current.totals.rest_long.cycles_completed }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v">{{ current.totals.rest_long.minutes_completed }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">EXTRAORDINÁRIOS</div>
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v extra">+{{ current.totals.extraordinary.cycles }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v extra">{{ current.totals.extraordinary.minutes }}</span></div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endif %}
+
+  {# ============================== CONTEXTOS ============================== #}
+  {% if section == 'contexts' %}
+    {% set ctx_list = current.cycle_contexts if scale == 'day' else current.contexts %}
+    {% if not ctx_list %}
+      <p class="empty-note">Nenhum contexto de configuração usado neste período.</p>
+    {% endif %}
+
+    {% for ctx in ctx_list %}
+    <div class="context-block">
+      <div class="kv-group-label">{{ 'CONTEXTO VIGENTE' if (ctx_list | length) == 1 else 'CONTEXTO ' ~ ctx.context_id }}</div>
+      {% if scale == 'day' %}
+      <div class="range">{{ ctx.started_at[11:16] if ctx.started_at else '?' }} → {{ ctx.ended_at[11:16] if ctx.ended_at else 'atual' }} · {{ ctx.focus.cycles_completed }} ciclos</div>
+      {% else %}
+      <div class="range">{{ ctx.days | length }} dia(s) · {{ ctx.focus.cycles_completed }} ciclos</div>
+      {% endif %}
+      <div class="raw-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="kv-row"><span class="kv-k">Foco</span><span class="kv-v">{{ ctx.configuration.focus_minutes }} min</span></div>
+        <div class="kv-row"><span class="kv-k">Pausa curta</span><span class="kv-v">{{ ctx.configuration.short_break_minutes }} min</span></div>
+        <div class="kv-row"><span class="kv-k">Pausa longa</span><span class="kv-v">{{ ctx.configuration.long_break_minutes }} min</span></div>
+        <div class="kv-row"><span class="kv-k">Meta mínima</span><span class="kv-v">{{ ctx.configuration.daily_minimum_goal }} ciclos</span></div>
+        <div class="kv-row"><span class="kv-k">Meta ideal</span><span class="kv-v">{{ ctx.configuration.daily_ideal_goal }} ciclos</span></div>
+        <div class="kv-row"><span class="kv-k">Meta semanal</span><span class="kv-v">{{ ctx.configuration.weekly_goal }} ciclos</span></div>
+      </div>
+    </div>
+    {% endfor %}
+  {% endif %}
+
+  {# ============================== TIMELINE (só dia) ============================== #}
+  {% if section == 'timeline' and scale == 'day' %}
+    {% if not current.focus_timeline %}
+      <p class="empty-note">Nenhum ciclo concluído neste dia.</p>
+    {% else %}
+    <div class="timeline">
+      {% for item in current.focus_timeline %}
+      <div class="timeline-row">
+        <div class="timeline-time">CICLO · {{ item.completed_at[11:16] if item.completed_at else '?' }}</div>
+        <div class="timeline-text{{ '' if item.title else ' empty' }}">{{ item.title or 'sem anotação' }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endif %}
+
+  {# ============================== TO-DO & ÁGUA ============================== #}
+  {% if section == 'todo_water' %}
+    <div class="raw-grid" style="grid-template-columns:1fr 1fr;">
+      <div>
+        <div class="kv-group-label">TO-DO</div>
+        {% set todo_total = current.todo.items_total or 0 %}
+        {% set todo_done = current.todo.items_completed or 0 %}
+        <div class="kv-row"><span class="kv-k">Itens</span><span class="kv-v">{{ todo_total }}</span></div>
+        <div class="kv-row"><span class="kv-k">Concluídos</span><span class="kv-v">{{ todo_done }}</span></div>
+        {% if todo_total > 0 %}
+        <div class="kv-row"><span class="kv-k">Taxa de conclusão</span><span class="kv-v muted">{{ (100 * todo_done / todo_total) | round | int }}% (derivado)</span></div>
+        {% endif %}
+      </div>
+      <div>
+        <div class="kv-group-label">ÁGUA</div>
+        {% if scale == 'day' %}
+        <div class="kv-row"><span class="kv-k">Consumido</span><span class="kv-v">{{ (current.water.total_ml / 1000) | round(2) }} L</span></div>
+        <div class="kv-row"><span class="kv-k">Meta</span><span class="kv-v muted">{{ (current.water.goal_ml / 1000) | round(2) }} L</span></div>
+        <div class="kv-row"><span class="kv-k">Garrafas</span><span class="kv-v">{{ current.water.bottles }}</span></div>
+        <div class="kv-row"><span class="kv-k">Capacidade da garrafa</span><span class="kv-v muted">{{ current.water.bottle_ml }} ml</span></div>
+        {% else %}
+        <div class="kv-row"><span class="kv-k">Consumido no período</span><span class="kv-v">{{ (current.water.total_water_consumed_ml / 1000) | round(2) }} L</span></div>
+        <div class="kv-row"><span class="kv-k">Garrafas</span><span class="kv-v">{{ current.water.total_bottles_consumed }}</span></div>
+        {% endif %}
+      </div>
+    </div>
+    {% if scale == 'day' and current.water.contexts | length > 1 %}
+    <p class="context-line">Mais de uma capacidade de garrafa vigorou neste dia — ver aba Contextos.</p>
+    {% endif %}
+  {% endif %}
+
+  {# ============================== RECOMPENSAS ============================== #}
+  {% if section == 'rewards' %}
+    {% if scale == 'day' %}
+    <div class="raw-grid">
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">MÍNIMO</div>
+          <div class="kv-row"><span class="kv-k">Título vigente</span><span class="kv-v muted">{{ current.rewards.daily_minimum.title or '—' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados</span><span class="kv-v">{{ current.rewards.daily_minimum.cycles_computed }} / {{ current.rewards.daily_minimum.goal }}</span></div>
+          <div class="kv-row"><span class="kv-k">Concluída</span><span class="kv-v" style="color:{{ 'var(--primary)' if current.rewards.daily_minimum.goal_completed else 'var(--text3)' }};">{{ 'sim' if current.rewards.daily_minimum.goal_completed else 'não' }}</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">IDEAL</div>
+          <div class="kv-row"><span class="kv-k">Título vigente</span><span class="kv-v muted">{{ current.rewards.daily_ideal.title or '—' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados</span><span class="kv-v">{{ current.rewards.daily_ideal.cycles_computed }} / {{ current.rewards.daily_ideal.goal }}</span></div>
+          <div class="kv-row"><span class="kv-k">Concluída</span><span class="kv-v" style="color:{{ 'var(--primary)' if current.rewards.daily_ideal.goal_completed else 'var(--text3)' }};">{{ 'sim' if current.rewards.daily_ideal.goal_completed else 'não' }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">SEMANAL</div>
+          <div class="kv-row"><span class="kv-k">Título vigente</span><span class="kv-v muted">{{ current.rewards.weekly.title or '—' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados (semana)</span><span class="kv-v">{{ current.rewards.weekly.cycles_computed }} / {{ current.rewards.weekly.goal }}</span></div>
+          <div class="kv-row"><span class="kv-k">Concluída</span><span class="kv-v" style="color:{{ 'var(--primary)' if current.rewards.weekly.goal_completed else 'var(--text3)' }};">{{ 'sim' if current.rewards.weekly.goal_completed else 'não' }}</span></div>
+        </div>
+      </div>
+      <div>
+        {% if current.rewards.absolute and current.rewards.absolute.absolute_progress_id %}
+        <div class="kv-group">
+          <div class="kv-group-label">ABSOLUTO — {{ (current.rewards.absolute.title or '') | upper }}</div>
+          <div class="kv-row"><span class="kv-k">Estado inicial</span><span class="kv-v">{{ current.rewards.absolute.start.current_cycles }} / {{ current.rewards.absolute.start.goal_cycles }}</span></div>
+          <div class="kv-row"><span class="kv-k">Estado final</span><span class="kv-v">{{ current.rewards.absolute.end.current_cycles }} / {{ current.rewards.absolute.end.goal_cycles }}</span></div>
+          {% set goal = current.rewards.absolute.end.goal_cycles or 1 %}
+          {% set start_pct = 100 * current.rewards.absolute.start.current_cycles / goal %}
+          {% set end_pct = 100 * current.rewards.absolute.end.current_cycles / goal %}
+          <div class="abs-mini">
+            <div class="track">
+              <div class="seg" style="width:{{ start_pct }}%"></div>
+              <div class="seg new" style="left:{{ start_pct }}%;width:{{ end_pct - start_pct }}%"></div>
+            </div>
+          </div>
+          <div class="abs-note">progressão do dia: +{{ current.rewards.absolute.cycles_computed or 0 }} ciclos</div>
+        </div>
+        {% else %}
+        <p class="empty-note">Sem objetivo absoluto ativo neste dia.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% else %}
+    {# semana / mês: recompensas agregadas #}
+    <div class="raw-grid">
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">MÍNIMO</div>
+          <div class="kv-row"><span class="kv-k">Dias concluídos</span><span class="kv-v">{{ current.rewards.daily_minimum.completed_count }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados</span><span class="kv-v">{{ current.rewards.daily_minimum.cycles_computed }}</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">IDEAL</div>
+          <div class="kv-row"><span class="kv-k">Dias concluídos</span><span class="kv-v">{{ current.rewards.daily_ideal.completed_count }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados</span><span class="kv-v">{{ current.rewards.daily_ideal.cycles_computed }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">SEMANAL</div>
+          <div class="kv-row"><span class="kv-k">Vezes concluída</span><span class="kv-v">{{ current.rewards.weekly.completed_count }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados</span><span class="kv-v">{{ current.rewards.weekly.cycles_computed }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">ABSOLUTO</div>
+          <div class="kv-row"><span class="kv-k">Progressão no período</span><span class="kv-v">+{{ current.rewards.absolute.cycles_computed }} ciclos</span></div>
+          <div class="kv-row"><span class="kv-k">Concluído no período</span><span class="kv-v">{{ current.rewards.absolute.completed_count }}</span></div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endif %}
+
+{% endif %}
+{% endblock %}

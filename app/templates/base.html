@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="{{ current_cfg.theme if current_cfg is defined else 'dark' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FOCO{% block title_suffix %}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="shell">
+    <nav class="sidebar">
+      <a href="{{ url_for('main.home') }}" class="{{ 'active' if request.endpoint=='main.home' }}" title="Home">
+        <svg viewBox="0 0 28 28" class="icon"><path d="M4 12L14 4l10 8"/><path d="M7 11v11h14V11"/></svg>
+      </a>
+      <a href="#" id="toggle-timer-popup" title="Timer Flutuante (Pop-up)">
+        <svg viewBox="0 0 28 28" class="icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="22" height="22" rx="4"/><rect x="12" y="12" width="11" height="11" rx="2" fill="currentColor"/><path d="M7 9h6M7 13h4M7 17h6"/></svg>
+      </a>
+      <a href="{{ url_for('notebook.notebook') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('notebook.') }}" title="Caderno Diário">
+        <svg viewBox="0 0 28 28" class="icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      </a>
+      <a href="{{ url_for('stats.stats') }}" class="{{ 'active' if request.endpoint=='stats.stats' }}" title="Estatísticas">
+        <svg viewBox="0 0 28 28" class="icon"><path d="M6 22V13"/><path d="M14 22V6"/><path d="M22 22v-9"/></svg>
+      </a>
+      <a href="{{ url_for('rewards.rewards') }}" class="{{ 'active' if request.endpoint=='rewards.rewards' }}" title="Recompensas">
+        <svg viewBox="0 0 28 28" class="icon"><rect x="7" y="9" width="14" height="13"/><path d="M14 9V5"/></svg>
+      </a>
+      <a href="#" id="toggle-water" title="Água">
+        <svg viewBox="0 0 28 28" class="icon"><path d="M14 3c0 0 8 7 8 13a8 8 0 11-16 0c0-6 8-13 8-13z"/></svg>
+      </a>
+      {% if current_cfg is defined and current_cfg.debug_tools_enabled %}
+      <button type="button" id="toggle-devtools" class="sidebar-toggle" title="Ferramentas de desenvolvedor" aria-controls="devtools-panel" aria-expanded="false">
+        <span class="icon-mask devtools-icon" aria-hidden="true"></span>
+      </button>
+      {% endif %}
+      <a href="#" id="theme-switch" title="Alternar Tema">
+        <svg viewBox="0 0 28 28" class="icon"><circle cx="14" cy="14" r="4"/><path d="M14 3v4M14 21v4M3 14h4M21 14h4M6 6l3 3M19 19l3 3M22 6l-3 3M9 19l-3 3"/></svg>
+      </a>
+      <a href="{{ url_for('settings.settings') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('settings.') }}" title="Configurações">
+        <span class="icon config-icon icon-mask" aria-hidden="true"></span>
+      </a>
+    </nav>
+    {% if current_cfg is defined and current_cfg.debug_tools_enabled %}
+    <aside class="devtools-panel" id="devtools-panel" aria-label="Ferramentas de desenvolvedor">
+      <div class="devtools-panel-head">
+        <div>
+          <div class="section-label" style="text-align:left;">Ferramentas de desenvolvimento</div>
+          <div class="devtools-panel-subtitle">Ações rápidas para testar o app sem sair da tela atual.</div>
+        </div>
+        <button type="button" class="devtools-panel-close" id="devtools-close" aria-label="Fechar painel">×</button>
+      </div>
+
+      <div class="devtools-panel-body">
+        <section class="devtools-group">
+          <div class="devtools-group-title">Relógio</div>
+          <div class="devtools-actions">
+            <form method="post" action="{{ url_for('api.debug_advance_time') }}" data-debug-form>
+              <input type="hidden" name="days" value="1">
+              <button class="btn small" type="submit">+1 dia</button>
+            </form>
+            <form method="post" action="{{ url_for('api.debug_advance_time') }}" data-debug-form>
+              <input type="hidden" name="days" value="7">
+              <button class="btn small" type="submit">+7 dias</button>
+            </form>
+            <form method="post" action="{{ url_for('api.debug_next_week') }}" data-debug-form>
+              <button class="btn small" type="submit">Próxima semana</button>
+            </form>
+            <form method="post" action="{{ url_for('api.debug_reset_time') }}" data-debug-form>
+              <button class="btn small ghost" type="submit">Resetar relógio</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="devtools-group">
+          <div class="devtools-group-title">Progresso</div>
+          <div class="devtools-actions">
+            <form method="post" action="{{ url_for('api.debug_complete_day') }}" data-debug-form data-debug-completion="1">
+              <input type="hidden" name="target" value="minimum">
+              <button class="btn small filled" type="submit">Completar média</button>
+            </form>
+            <form method="post" action="{{ url_for('api.debug_complete_day') }}" data-debug-form data-debug-completion="1">
+              <input type="hidden" name="target" value="ideal">
+              <button class="btn small filled" type="submit">Completar ideal</button>
+            </form>
+            <form class="inline devtools-inline" method="post" action="{{ url_for('api.debug_simulate_cycles') }}" data-debug-form data-debug-completion="1">
+              <input type="text" name="title" placeholder="título do ciclo">
+              <input type="number" name="count" min="1" max="50" value="1">
+              <button class="btn small" type="submit">Simular ciclos</button>
+            </form>
+            <form method="post" action="{{ url_for('api.debug_complete_session') }}" data-debug-form data-debug-session-completion="1">
+              <button class="btn small filled" type="submit">Completar sessão</button>
+            </form>
+            <form method="post" action="{{ url_for('api.debug_reset_cycle_progress') }}" data-debug-form data-confirm="Isso vai zerar o progresso atual do dia/semana e reiniciar o objetivo absoluto ativo. Continuar?">
+              <button class="btn small ghost" type="submit">Reiniciar progresso</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="devtools-group">
+          <div class="devtools-group-title">Dados</div>
+          <div class="devtools-actions">
+            <form class="inline devtools-inline" method="post" action="{{ url_for('api.debug_generate_data') }}" data-debug-form>
+              <input type="number" name="days" min="1" max="30" value="7" title="Dias de histórico fictício">
+              <input type="number" name="cycles_per_day" min="1" max="12" value="3" title="Ciclos por dia">
+              <input type="number" name="water_per_day" min="0" max="12" value="2" title="Garrafas por dia">
+              <button class="btn small ghost" type="submit">Gerar estatísticas fictícias</button>
+            </form>
+            <form method="post" action="{{ url_for('api.debug_clear_generated_data') }}" data-debug-form data-confirm="Isso vai remover apenas o último lote de dados fictícios gerados pelo debug. Continuar?">
+              <button class="btn small ghost" type="submit">Limpar fictícios</button>
+            </form>
+            <form method="post" action="{{ url_for('api.debug_clear_database') }}" data-debug-form data-confirm="Isso vai apagar todos os dados do banco, mantendo apenas a estrutura das tabelas. Continuar?">
+              <button class="btn small ghost" type="submit">Limpar banco</button>
+            </form>
+          </div>
+        </section>
+        <section class="devtools-group" id="devtools-pause-section">
+          <div class="devtools-group-title">Painel de Pausa</div>
+          <div class="devtools-actions">
+            <button class="btn small filled" type="button" id="devtools-pause-preview">Simular pausa</button>
+            <button class="btn small" type="button" id="devtools-pause-next" style="display:none">Próxima mensagem ↻</button>
+            <button class="btn small ghost" type="button" id="devtools-pause-close" style="display:none">Fechar preview</button>
+          </div>
+          <div id="devtools-pause-info" style="font-size:11px;color:var(--text2);margin-top:6px;display:none"></div>
+        </section>
+        <section class="devtools-group" id="devtools-extraordinary-section">
+          <div class="devtools-group-title">Promoção Extraordinário</div>
+          <div class="devtools-actions">
+            <button class="btn small filled" type="button" id="devtools-extra-skip">Pular para ciclo extraordinário</button>
+            <button class="btn small" type="button" id="devtools-extra-next" style="display:none">+1 ciclo</button>
+            <button class="btn small ghost" type="button" id="devtools-extra-close" style="display:none">Fechar preview</button>
+          </div>
+          <div id="devtools-extra-info" style="font-size:11px;color:var(--text2);margin-top:6px;display:none"></div>
+        </section>
+      </div>
+    </aside>
+    {% endif %}
+    <main class="main{% block main_extra_class %}{% endblock %}">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script>
+    // ── Definição de painéis gerenciados ──
+    var FOCO_PANELS = [
+      { key: "foco_water_open",    id: "water-wrap",    cls: "open" },
+      { key: "foco_extra_open",    id: "extra-block",   cls: "visible" },
+      { key: "foco_devtools_open", id: "devtools-panel", cls: "open" },
+    ];
+
+    if (!window.FocoDevTools) {
+      window.FocoDevTools = (function() {
+        var concludeAudio = null;
+
+        function ensureAudio() {
+          if (!concludeAudio) {
+            concludeAudio = new Audio("/static/sounds/do_pos_conclusao.mp3");
+          }
+          return concludeAudio;
+        }
+
+        function playConclude() {
+          var audio = ensureAudio();
+          audio.currentTime = 0;
+          var promise = audio.play();
+          if (promise) {
+            promise.catch(function(err) {
+              console.warn("[som] conclusão:", err);
+            });
+          }
+        }
+
+        function applyHomeState() {}
+        function showPostCycleMessage() {}
+        function handleCompletionPayload() {
+          playConclude();
+        }
+        function playFocusEndSound(isLastCycleBeforeLongBreak) {
+          var url = isLastCycleBeforeLongBreak
+            ? "/static/sounds/fim_dos_ciclos_de_foco.mp3"
+            : "/static/sounds/fim_de_foco.mp3";
+          var audio = new Audio(url);
+          audio.play().catch(function(err) {
+            console.warn("[som] fim de foco:", err);
+          });
+        }
+        function handleSessionCompletionPayload(data) {
+          var cyclesPerSession = Number(data && data.cycles_per_session) || 0;
+          var completedCycles = Number(
+            data && (
+              data.completed_cycles_after != null
+                ? data.completed_cycles_after
+                : data.completed_cycles != null
+                  ? data.completed_cycles
+                  : 0
+            )
+          ) || 0;
+          playFocusEndSound(
+            cyclesPerSession > 0 &&
+            completedCycles > 0 &&
+            completedCycles % cyclesPerSession === 0
+          );
+        }
+
+        return {
+          playConclude: playConclude,
+          playFocusEndSound: playFocusEndSound,
+          applyHomeState: applyHomeState,
+          handleCompletionPayload: handleCompletionPayload,
+          handleSessionCompletionPayload: handleSessionCompletionPayload,
+          showPostCycleMessage: showPostCycleMessage,
+        };
+      })();
+    }
+
+    // ── Restaurar estado dos painéis após reload de tema (executa direto, DOM já existe) ──
+    FOCO_PANELS.forEach(function(p) {
+      if (localStorage.getItem(p.key) === "1") {
+        var el = document.getElementById(p.id);
+        if (el) {
+          el.style.transition = "none";
+          el.classList.add(p.cls);
+          void el.offsetHeight;
+          el.style.transition = "";
+          localStorage.removeItem(p.key);
+          // Emitir evento adiado para que scripts carregados depois (ex: calendar.js) já tenham registrado seus listeners
+          (function(target) {
+            setTimeout(function() {
+              target.dispatchEvent(new CustomEvent("foco:restore-open", { bubbles: true }));
+            }, 0);
+          })(el);
+        }
+      }
+    });
+
+    // ── Theme switch ──
+    document.addEventListener("DOMContentLoaded", function() {
+      var themeSwitch = document.getElementById("theme-switch");
+      var devtoolsToggle = document.getElementById("toggle-devtools");
+      var devtoolsPanel = document.getElementById("devtools-panel");
+      var devtoolsClose = document.getElementById("devtools-close");
+
+      function setDevtoolsOpen(isOpen) {
+        if (!devtoolsToggle || !devtoolsPanel) return;
+        devtoolsPanel.classList.toggle("open", isOpen);
+        devtoolsToggle.classList.toggle("active", isOpen);
+        devtoolsToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        if (isOpen) {
+          localStorage.setItem("foco_devtools_open", "1");
+        } else {
+          localStorage.removeItem("foco_devtools_open");
+        }
+      }
+
+      if (devtoolsToggle && devtoolsPanel) {
+        setDevtoolsOpen(devtoolsPanel.classList.contains("open"));
+        devtoolsToggle.addEventListener("click", function() {
+          setDevtoolsOpen(!devtoolsPanel.classList.contains("open"));
+        });
+        if (devtoolsClose) {
+          devtoolsClose.addEventListener("click", function() {
+            setDevtoolsOpen(false);
+          });
+        }
+      }
+
+      document.querySelectorAll("[data-debug-form]").forEach(function(form) {
+        form.addEventListener("submit", function(e) {
+          e.preventDefault();
+          var confirmMessage = form.getAttribute("data-confirm");
+          if (confirmMessage && !window.confirm(confirmMessage)) {
+            return;
+          }
+
+          var payload = {};
+          new FormData(form).forEach(function(value, key) {
+            payload[key] = value;
+          });
+
+          fetch(form.action, {
+            method: (form.getAttribute("method") || "POST").toUpperCase(),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          })
+          .then(function(res) {
+            if (!res.ok) {
+              throw new Error("requisição inválida");
+            }
+            return res.json();
+          })
+          .then(function(data) {
+            var isHome = window.location.pathname === "/" || window.location.pathname === "";
+            var isSessionCompletion = form.getAttribute("data-debug-session-completion") === "1";
+            var isCompletion = form.getAttribute("data-debug-completion") === "1";
+
+            if (isHome) {
+              if (isSessionCompletion && window.FocoDevTools && typeof window.FocoDevTools.handleSessionCompletionPayload === "function") {
+                window.FocoDevTools.handleSessionCompletionPayload(data);
+                return;
+              }
+              if (isCompletion && window.FocoDevTools && typeof window.FocoDevTools.handleCompletionPayload === "function") {
+                window.FocoDevTools.handleCompletionPayload(data, { playConclude: true });
+                return;
+              }
+              if (data && data.home_state && window.FocoDevTools && typeof window.FocoDevTools.applyHomeState === "function") {
+                window.FocoDevTools.applyHomeState(data.home_state);
+                return;
+              }
+            }
+            window.location.reload();
+          })
+          .catch(function(err) {
+            console.error("Erro ao executar ferramenta de debug:", err);
+          });
+        });
+      });
+
+      // ── DevTools Audit: Promoção de Ciclos Extraordinários ──
+      (function setupExtraordinaryAudit() {
+        var skipBtn  = document.getElementById("devtools-extra-skip");
+        var nextBtn  = document.getElementById("devtools-extra-next");
+        var closeBtn = document.getElementById("devtools-extra-close");
+        var infoEl   = document.getElementById("devtools-extra-info");
+
+        if (!skipBtn) return;
+
+        var currentSimulatedExtraCount = 0;
+
+        function updatePromoTimerDisplay(data) {
+          var promoBadge = document.getElementById("extra-promo-badge");
+          var promoOrig  = document.getElementById("extra-promo-original");
+          var promoPill  = document.getElementById("extra-promo-pill");
+          var timerDisp  = document.getElementById("timer-display");
+
+          if (promoBadge) {
+            if (data.discount_pct > 0) {
+              if (promoOrig) promoOrig.textContent = data.base_minutes + " min";
+              if (promoPill) promoPill.textContent = "-" + data.discount_pct + "%";
+              promoBadge.style.display = "flex";
+            } else {
+              promoBadge.style.display = "none";
+            }
+          }
+
+          if (timerDisp) {
+            var m = data.effective_minutes;
+            timerDisp.textContent = (m < 10 ? "0" + m : m) + ":00";
+            timerDisp.className = "num timer-num extraordinary";
+          }
+        }
+
+        function hidePromoTimerDisplay() {
+          var promoBadge = document.getElementById("extra-promo-badge");
+          var timerDisp  = document.getElementById("timer-display");
+          if (promoBadge) promoBadge.style.display = "none";
+          if (timerDisp) {
+            timerDisp.className = "num timer-num";
+            if (window.FOCUS_STATE && window.FOCUS_STATE.focusMinutes) {
+              var m = window.FOCUS_STATE.focusMinutes;
+              timerDisp.textContent = (m < 10 ? "0" + m : m) + ":00";
+            }
+          }
+        }
+
+        function drawCycle(extraSoFar) {
+          fetch("/api/debug/extraordinary/draw", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ extra_cycles_so_far: extraSoFar })
+          })
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            currentSimulatedExtraCount = extraSoFar;
+
+            if (infoEl) {
+              infoEl.style.display = "block";
+              var discText = data.discount_pct > 0 
+                ? "<strong>" + data.discount_pct + "% de desconto</strong> — chance de " + data.chance_pct + "%"
+                : "<strong>0% de desconto</strong> — chance de " + data.chance_pct + "%";
+              
+              var timeDetail = data.discount_pct > 0
+                ? " (" + data.base_minutes + " min → " + data.effective_minutes + " min)"
+                : " (" + data.base_minutes + " min)";
+
+              infoEl.innerHTML = "<strong>" + data.extra_cycle_number + "º ciclo extraordinário</strong>: " 
+                + discText + timeDetail;
+            }
+
+            updatePromoTimerDisplay(data);
+
+            skipBtn.style.display = "none";
+            if (nextBtn)  nextBtn.style.display = "";
+            if (closeBtn) closeBtn.style.display = "";
+          })
+          .catch(function(err) {
+            console.error("Erro ao auditar promoção extraordinária:", err);
+          });
+        }
+
+        skipBtn.addEventListener("click", function() {
+          drawCycle(0);
+        });
+
+        if (nextBtn) {
+          nextBtn.addEventListener("click", function() {
+            drawCycle(currentSimulatedExtraCount + 1);
+          });
+        }
+
+        if (closeBtn) {
+          closeBtn.addEventListener("click", function() {
+            currentSimulatedExtraCount = 0;
+            if (infoEl)  infoEl.style.display = "none";
+            if (skipBtn) skipBtn.style.display = "";
+            if (nextBtn) nextBtn.style.display = "none";
+            if (closeBtn) closeBtn.style.display = "none";
+            hidePromoTimerDisplay();
+          });
+        }
+      })();
+
+      if (themeSwitch) {
+        themeSwitch.addEventListener("click", function(e) {
+          if (e) e.preventDefault();
+          fetch("/api/theme", { method: "POST", headers: { "Content-Type": "application/json" } })
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            // Salvar estado aberto dos painéis antes do reload
+            FOCO_PANELS.forEach(function(p) {
+              var el = document.getElementById(p.id);
+              if (el && el.classList.contains(p.cls)) {
+                localStorage.setItem(p.key, "1");
+              }
+            });
+            window.location.reload();
+          })
+          .catch(function(err) { console.error("Erro ao alternar tema:", err); });
+        });
+      }
+    });
+  </script>
+  <script src="{{ url_for('static', filename='js/timer-popup.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

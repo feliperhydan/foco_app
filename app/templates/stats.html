@@ -1,0 +1,903 @@
+{% extends "base.html" %}
+{% block main_extra_class %} stats-main{% endblock %}
+{% block content %}
+<div class="stats-page">
+
+{% macro render_pct_delta(val_a, val_b) %}
+  {% if val_a is not none and val_b is not none %}
+    {% set a = val_a | float %}
+    {% set b = val_b | float %}
+    {% if a > 0 %}
+      {% set raw_pct = (100.0 * (b - a) / a) | round(1) %}
+      {% set pct_val = raw_pct | int if (raw_pct == raw_pct | int) else raw_pct %}
+      {% if raw_pct > 0 %}
+        <span class="kv-delta up">↑ {{ pct_val }}%</span>
+      {% elif raw_pct < 0 %}
+        <span class="kv-delta down">↓ {{ (pct_val | abs) }}%</span>
+      {% else %}
+        <span class="kv-delta flat">—</span>
+      {% endif %}
+    {% elif a == 0 and b > 0 %}
+      <span class="kv-delta up">↑ 100%</span>
+    {% elif a == 0 and b == 0 %}
+      <span class="kv-delta flat">—</span>
+    {% endif %}
+  {% endif %}
+{% endmacro %}
+
+{% macro render_section(current_data, scale_val, section_val, compare_data=None) %}
+  {# ============================== DADOS BRUTOS ============================== #}
+  {% if section_val == 'raw' %}
+    {% if scale_val == 'day' %}
+    <div class="raw-grid">
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">SESSÃO</div>
+          <div class="kv-row"><span class="kv-k">Data</span><span class="kv-v">{{ current_data.date }}</span></div>
+          {% if current_data.session %}
+          <div class="kv-row"><span class="kv-k">Início</span><span class="kv-v">{{ current_data.session.started_at[11:16] if current_data.session.started_at else '—' }}</span></div>
+          {% endif %}
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">CICLOS DE FOCO</div>
+          {% set focus_c = current_data.cycle_contexts | sum(attribute='focus.cycles_completed') %}
+          {% set focus_m = current_data.cycle_contexts | sum(attribute='focus.minutes_completed') %}
+          {% if compare_data %}
+            {% set comp_focus_c = (compare_data.cycle_contexts | sum(attribute='focus.cycles_completed')) if compare_data.cycle_contexts else 0 %}
+            {% set comp_focus_m = (compare_data.cycle_contexts | sum(attribute='focus.minutes_completed')) if compare_data.cycle_contexts else 0 %}
+          {% endif %}
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ focus_c }}{{ render_pct_delta(comp_focus_c, focus_c) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos de foco</span><span class="kv-v">{{ focus_m }} min{{ render_pct_delta(comp_focus_m, focus_m) if compare_data else '' }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">DESCANSO CURTO</div>
+          {% set rs_c = current_data.cycle_contexts | sum(attribute='rest_short.cycles_completed') %}
+          {% set rs_m = current_data.cycle_contexts | sum(attribute='rest_short.minutes_completed') %}
+          {% if compare_data %}
+            {% set comp_rs_c = (compare_data.cycle_contexts | sum(attribute='rest_short.cycles_completed')) if compare_data.cycle_contexts else 0 %}
+            {% set comp_rs_m = (compare_data.cycle_contexts | sum(attribute='rest_short.minutes_completed')) if compare_data.cycle_contexts else 0 %}
+          {% endif %}
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ rs_c }}{{ render_pct_delta(comp_rs_c, rs_c) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v">{{ rs_m }} min{{ render_pct_delta(comp_rs_m, rs_m) if compare_data else '' }}</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">DESCANSO LONGO</div>
+          {% set rl_c = current_data.cycle_contexts | sum(attribute='rest_long.cycles_completed') %}
+          {% set rl_m = current_data.cycle_contexts | sum(attribute='rest_long.minutes_completed') %}
+          {% if compare_data %}
+            {% set comp_rl_c = (compare_data.cycle_contexts | sum(attribute='rest_long.cycles_completed')) if compare_data.cycle_contexts else 0 %}
+            {% set comp_rl_m = (compare_data.cycle_contexts | sum(attribute='rest_long.minutes_completed')) if compare_data.cycle_contexts else 0 %}
+          {% endif %}
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ rl_c }}{{ render_pct_delta(comp_rl_c, rl_c) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v">{{ rl_m }} min{{ render_pct_delta(comp_rl_m, rl_m) if compare_data else '' }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">EXTRAORDINÁRIOS</div>
+          {% set ex_c = current_data.cycle_contexts | sum(attribute='extraordinary.cycles') %}
+          {% set ex_m = current_data.cycle_contexts | sum(attribute='extraordinary.minutes') %}
+          {% if compare_data %}
+            {% set comp_ex_c = (compare_data.cycle_contexts | sum(attribute='extraordinary.cycles')) if compare_data.cycle_contexts else 0 %}
+            {% set comp_ex_m = (compare_data.cycle_contexts | sum(attribute='extraordinary.minutes')) if compare_data.cycle_contexts else 0 %}
+          {% endif %}
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v extra">+{{ ex_c }}{{ render_pct_delta(comp_ex_c, ex_c) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v extra">{{ ex_m }} min{{ render_pct_delta(comp_ex_m, ex_m) if compare_data else '' }}</span></div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="raw-grid">
+      {% if compare_data %}
+        {% set comp_focus_c = compare_data.totals.focus.cycles_completed if compare_data.totals else 0 %}
+        {% set comp_focus_m = compare_data.totals.focus.minutes_completed if compare_data.totals else 0 %}
+        {% set comp_days_len = (compare_data.days | length) if compare_data.days else 0 %}
+        {% set comp_rs_c = compare_data.totals.rest_short.cycles_completed if compare_data.totals else 0 %}
+        {% set comp_rs_m = compare_data.totals.rest_short.minutes_completed if compare_data.totals else 0 %}
+        {% set comp_rl_c = compare_data.totals.rest_long.cycles_completed if compare_data.totals else 0 %}
+        {% set comp_rl_m = compare_data.totals.rest_long.minutes_completed if compare_data.totals else 0 %}
+        {% set comp_ex_c = compare_data.totals.extraordinary.cycles if compare_data.totals else 0 %}
+        {% set comp_ex_m = compare_data.totals.extraordinary.minutes if compare_data.totals else 0 %}
+      {% endif %}
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">CICLOS DE FOCO</div>
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ current_data.totals.focus.cycles_completed }}{{ render_pct_delta(comp_focus_c, current_data.totals.focus.cycles_completed) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos de foco</span><span class="kv-v">{{ current_data.totals.focus.minutes_completed }} min{{ render_pct_delta(comp_focus_m, current_data.totals.focus.minutes_completed) if compare_data else '' }}</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">DIAS DO PERÍODO</div>
+          <div class="kv-row"><span class="kv-k">Dias com Daily registrado</span><span class="kv-v">{{ current_data.days | length }}{{ render_pct_delta(comp_days_len, current_data.days | length) if compare_data else '' }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">DESCANSO CURTO</div>
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ current_data.totals.rest_short.cycles_completed }}{{ render_pct_delta(comp_rs_c, current_data.totals.rest_short.cycles_completed) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v">{{ current_data.totals.rest_short.minutes_completed }}{{ render_pct_delta(comp_rs_m, current_data.totals.rest_short.minutes_completed) if compare_data else '' }} min</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">DESCANSO LONGO</div>
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v">{{ current_data.totals.rest_long.cycles_completed }}{{ render_pct_delta(comp_rl_c, current_data.totals.rest_long.cycles_completed) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v">{{ current_data.totals.rest_long.minutes_completed }}{{ render_pct_delta(comp_rl_m, current_data.totals.rest_long.minutes_completed) if compare_data else '' }} min</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">EXTRAORDINÁRIOS</div>
+          <div class="kv-row"><span class="kv-k">Quantidade</span><span class="kv-v extra">+{{ current_data.totals.extraordinary.cycles }}{{ render_pct_delta(comp_ex_c, current_data.totals.extraordinary.cycles) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Minutos</span><span class="kv-v extra">{{ current_data.totals.extraordinary.minutes }} min{{ render_pct_delta(comp_ex_m, current_data.totals.extraordinary.minutes) if compare_data else '' }}</span></div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endif %}
+
+  {# ============================== CONTEXTOS ============================== #}
+  {% if section_val == 'contexts' %}
+    {% set ctx_list = current_data.cycle_contexts if scale_val == 'day' else current_data.contexts %}
+    {% if not ctx_list %}
+      <p class="empty-note">Nenhum contexto de configuração usado neste período.</p>
+    {% endif %}
+    {% for ctx in ctx_list %}
+    <div class="context-block">
+      <div class="kv-group-label">{{ 'CONTEXTO VIGENTE' if (ctx_list | length) == 1 else 'CONTEXTO ' ~ ctx.context_id }}</div>
+      {% if scale_val == 'day' %}
+      <div class="range">{{ ctx.started_at[11:16] if ctx.started_at else '?' }} → {{ ctx.ended_at[11:16] if ctx.ended_at else 'atual' }} · {{ ctx.focus.cycles_completed }} ciclos</div>
+      {% else %}
+      <div class="range">{{ ctx.days | length }} dia(s) · {{ ctx.focus.cycles_completed }} ciclos</div>
+      {% endif %}
+      <div class="raw-grid">
+        <div class="kv-row"><span class="kv-k">Foco</span><span class="kv-v">{{ ctx.configuration.focus_minutes }} min</span></div>
+        <div class="kv-row"><span class="kv-k">Pausa curta</span><span class="kv-v">{{ ctx.configuration.short_break_minutes }} min</span></div>
+        <div class="kv-row"><span class="kv-k">Pausa longa</span><span class="kv-v">{{ ctx.configuration.long_break_minutes }} min</span></div>
+        <div class="kv-row"><span class="kv-k">Meta média</span><span class="kv-v">{{ ctx.configuration.daily_minimum_goal }} ciclos</span></div>
+        <div class="kv-row"><span class="kv-k">Meta ideal</span><span class="kv-v">{{ ctx.configuration.daily_ideal_goal }} ciclos</span></div>
+        <div class="kv-row"><span class="kv-k">Meta semanal</span><span class="kv-v">{{ ctx.configuration.weekly_goal }} ciclos</span></div>
+      </div>
+    </div>
+    {% endfor %}
+  {% endif %}
+
+  {# ============================== TIMELINE (só dia) ============================== #}
+  {% if section_val == 'timeline' and scale_val == 'day' %}
+    {% if not current_data.focus_timeline %}
+      <p class="empty-note">Nenhum ciclo concluído neste dia.</p>
+    {% else %}
+    <div class="timeline">
+      {% for item in current_data.focus_timeline %}
+      <div class="timeline-row">
+        <div class="timeline-time">CICLO · {{ item.completed_at[11:16] if item.completed_at else '?' }}</div>
+        <div class="timeline-text{{ '' if item.title else ' empty' }}">{{ item.title or 'sem anotação' }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endif %}
+
+  {# ============================== TO-DO & ÁGUA ============================== #}
+  {% if section_val == 'todo_water' %}
+    <div class="raw-grid raw-grid-2">
+      <div>
+        <div class="kv-group-label">TO-DO</div>
+        {% set todo_total = current_data.todo.items_total or 0 %}
+        {% set todo_done = current_data.todo.items_completed or 0 %}
+        {% if compare_data %}
+          {% set comp_todo_total = compare_data.todo.items_total or 0 if compare_data.todo else 0 %}
+          {% set comp_todo_done = compare_data.todo.items_completed or 0 if compare_data.todo else 0 %}
+        {% endif %}
+        <div class="kv-row"><span class="kv-k">Itens</span><span class="kv-v">{{ todo_total }}{{ render_pct_delta(comp_todo_total, todo_total) if compare_data else '' }}</span></div>
+        <div class="kv-row"><span class="kv-k">Concluídos</span><span class="kv-v">{{ todo_done }}{{ render_pct_delta(comp_todo_done, todo_done) if compare_data else '' }}</span></div>
+        {% if todo_total > 0 %}
+        {% set todo_rate = (100 * todo_done / todo_total) | round | int %}
+        {% set comp_todo_rate = ((100 * comp_todo_done / comp_todo_total) | round | int) if (compare_data and comp_todo_total > 0) else 0 %}
+        <div class="kv-row"><span class="kv-k">Taxa de conclusão</span><span class="kv-v muted">{{ todo_rate }}%{{ render_pct_delta(comp_todo_rate, todo_rate) if (compare_data and comp_todo_total > 0) else '' }} (derivado)</span></div>
+        {% endif %}
+      </div>
+      <div>
+        <div class="kv-group-label">ÁGUA</div>
+        {% if scale_val == 'day' %}
+        {% set w_total_l = (current_data.water.total_ml / 1000) | round(2) %}
+        {% set w_bottles = current_data.water.bottles %}
+        {% if compare_data %}
+          {% set comp_w_total_l = ((compare_data.water.total_ml / 1000) | round(2)) if compare_data.water else 0 %}
+          {% set comp_w_bottles = compare_data.water.bottles if compare_data.water else 0 %}
+        {% endif %}
+        <div class="kv-row"><span class="kv-k">Consumido</span><span class="kv-v">{{ w_total_l }} L{{ render_pct_delta(comp_w_total_l, w_total_l) if compare_data else '' }}</span></div>
+        <div class="kv-row"><span class="kv-k">Meta</span><span class="kv-v muted">{{ (current_data.water.goal_ml / 1000) | round(2) }} L</span></div>
+        <div class="kv-row"><span class="kv-k">Garrafas</span><span class="kv-v">{{ w_bottles }}{{ render_pct_delta(comp_w_bottles, w_bottles) if compare_data else '' }}</span></div>
+        <div class="kv-row"><span class="kv-k">Capacidade da garrafa</span><span class="kv-v muted">{{ current_data.water.bottle_ml }} ml</span></div>
+        {% else %}
+        {% set w_total_l = (current_data.water.total_water_consumed_ml / 1000) | round(2) %}
+        {% set w_bottles = current_data.water.total_bottles_consumed %}
+        {% if compare_data %}
+          {% set comp_w_total_l = ((compare_data.water.total_water_consumed_ml / 1000) | round(2)) if compare_data.water else 0 %}
+          {% set comp_w_bottles = compare_data.water.total_bottles_consumed if compare_data.water else 0 %}
+        {% endif %}
+        <div class="kv-row"><span class="kv-k">Consumido no período</span><span class="kv-v">{{ w_total_l }} L{{ render_pct_delta(comp_w_total_l, w_total_l) if compare_data else '' }}</span></div>
+        <div class="kv-row"><span class="kv-k">Garrafas</span><span class="kv-v">{{ w_bottles }}{{ render_pct_delta(comp_w_bottles, w_bottles) if compare_data else '' }}</span></div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {# ============================== RECOMPENSAS ============================== #}
+  {% if section_val == 'rewards' %}
+    {% if scale_val == 'day' %}
+    {% if compare_data %}
+      {% set comp_min_c = compare_data.rewards.daily_minimum.cycles_computed if compare_data.rewards else 0 %}
+      {% set comp_ideal_c = compare_data.rewards.daily_ideal.cycles_computed if compare_data.rewards else 0 %}
+      {% set comp_weekly_c = compare_data.rewards.weekly.cycles_computed if compare_data.rewards else 0 %}
+      {% set comp_abs_c = (compare_data.rewards.absolute.cycles_computed or 0) if (compare_data.rewards and compare_data.rewards.absolute) else 0 %}
+    {% endif %}
+    <div class="raw-grid">
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">MÉDIA</div>
+          <div class="kv-row"><span class="kv-k">Título vigente</span><span class="kv-v muted">{{ current_data.rewards.daily_minimum.title or '—' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados</span><span class="kv-v">{{ current_data.rewards.daily_minimum.cycles_computed }} / {{ current_data.rewards.daily_minimum.goal }}{{ render_pct_delta(comp_min_c, current_data.rewards.daily_minimum.cycles_computed) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Concluída</span><span class="kv-v" style="color:{{ 'var(--primary)' if current_data.rewards.daily_minimum.goal_completed else 'var(--text3)' }};">{{ 'sim' if current_data.rewards.daily_minimum.goal_completed else 'não' }}</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">IDEAL</div>
+          <div class="kv-row"><span class="kv-k">Título vigente</span><span class="kv-v muted">{{ current_data.rewards.daily_ideal.title or '—' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados</span><span class="kv-v">{{ current_data.rewards.daily_ideal.cycles_computed }} / {{ current_data.rewards.daily_ideal.goal }}{{ render_pct_delta(comp_ideal_c, current_data.rewards.daily_ideal.cycles_computed) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Concluída</span><span class="kv-v" style="color:{{ 'var(--primary)' if current_data.rewards.daily_ideal.goal_completed else 'var(--text3)' }};">{{ 'sim' if current_data.rewards.daily_ideal.goal_completed else 'não' }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">SEMANAL</div>
+          <div class="kv-row"><span class="kv-k">Título vigente</span><span class="kv-v muted">{{ current_data.rewards.weekly.title or '—' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados (semana)</span><span class="kv-v">{{ current_data.rewards.weekly.cycles_computed }} / {{ current_data.rewards.weekly.goal }}{{ render_pct_delta(comp_weekly_c, current_data.rewards.weekly.cycles_computed) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Concluída</span><span class="kv-v" style="color:{{ 'var(--primary)' if current_data.rewards.weekly.goal_completed else 'var(--text3)' }};">{{ 'sim' if current_data.rewards.weekly.goal_completed else 'não' }}</span></div>
+        </div>
+      </div>
+      <div>
+        {% if current_data.rewards.absolute and current_data.rewards.absolute.absolute_progress_id %}
+        <div class="kv-group">
+          <div class="kv-group-label">ABSOLUTO — {{ (current_data.rewards.absolute.title or '') | upper }}</div>
+          <div class="kv-row"><span class="kv-k">Estado inicial</span><span class="kv-v">{{ current_data.rewards.absolute.start.current_cycles }} / {{ current_data.rewards.absolute.start.goal_cycles }}</span></div>
+          <div class="kv-row"><span class="kv-k">Estado final</span><span class="kv-v">{{ current_data.rewards.absolute.end.current_cycles }} / {{ current_data.rewards.absolute.end.goal_cycles }}</span></div>
+          <div class="abs-note">progressão do dia: +{{ current_data.rewards.absolute.cycles_computed or 0 }} ciclos{{ render_pct_delta(comp_abs_c, current_data.rewards.absolute.cycles_computed or 0) if compare_data else '' }}</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% else %}
+    {% if compare_data %}
+      {% set comp_min_done = compare_data.rewards.daily_minimum.completed_count if compare_data.rewards else 0 %}
+      {% set comp_min_c = compare_data.rewards.daily_minimum.cycles_computed if compare_data.rewards else 0 %}
+      {% set comp_ideal_done = compare_data.rewards.daily_ideal.completed_count if compare_data.rewards else 0 %}
+      {% set comp_ideal_c = compare_data.rewards.daily_ideal.cycles_computed if compare_data.rewards else 0 %}
+      {% set comp_weekly_done = compare_data.rewards.weekly.completed_count if compare_data.rewards else 0 %}
+      {% set comp_weekly_c = compare_data.rewards.weekly.cycles_computed if compare_data.rewards else 0 %}
+      {% set comp_abs_c = compare_data.rewards.absolute.cycles_computed if (compare_data.rewards and compare_data.rewards.absolute) else 0 %}
+      {% set comp_abs_done = compare_data.rewards.absolute.completed_count if (compare_data.rewards and compare_data.rewards.absolute) else 0 %}
+    {% endif %}
+    <div class="raw-grid">
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">MÉDIA</div>
+          <div class="kv-row"><span class="kv-k">Dias concluídos</span><span class="kv-v">{{ current_data.rewards.daily_minimum.completed_count }}{{ render_pct_delta(comp_min_done, current_data.rewards.daily_minimum.completed_count) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados</span><span class="kv-v">{{ current_data.rewards.daily_minimum.cycles_computed }}{{ render_pct_delta(comp_min_c, current_data.rewards.daily_minimum.cycles_computed) if compare_data else '' }}</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label">IDEAL</div>
+          <div class="kv-row"><span class="kv-k">Dias concluídos</span><span class="kv-v">{{ current_data.rewards.daily_ideal.completed_count }}{{ render_pct_delta(comp_ideal_done, current_data.rewards.daily_ideal.completed_count) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados</span><span class="kv-v">{{ current_data.rewards.daily_ideal.cycles_computed }}{{ render_pct_delta(comp_ideal_c, current_data.rewards.daily_ideal.cycles_computed) if compare_data else '' }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">SEMANAL</div>
+          <div class="kv-row"><span class="kv-k">Vezes concluída</span><span class="kv-v">{{ current_data.rewards.weekly.completed_count }}{{ render_pct_delta(comp_weekly_done, current_data.rewards.weekly.completed_count) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos computados</span><span class="kv-v">{{ current_data.rewards.weekly.cycles_computed }}{{ render_pct_delta(comp_weekly_c, current_data.rewards.weekly.cycles_computed) if compare_data else '' }}</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label">ABSOLUTO</div>
+          <div class="kv-row"><span class="kv-k">Progressão no período</span><span class="kv-v">+{{ current_data.rewards.absolute.cycles_computed }} ciclos{{ render_pct_delta(comp_abs_c, current_data.rewards.absolute.cycles_computed) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Concluído no período</span><span class="kv-v">{{ current_data.rewards.absolute.completed_count }}{{ render_pct_delta(comp_abs_done, current_data.rewards.absolute.completed_count) if compare_data else '' }}</span></div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endif %}
+  {# ============================== ANÁLISE ============================== #}
+  {% if section_val == 'analysis' %}
+    {% if scale_val != 'day' and current_data.analysis is defined %}
+    {% if compare_data %}
+      {% set comp_focus_m = compare_data.totals.focus.minutes_completed if compare_data.totals else 0 %}
+      {% set comp_focus_c = compare_data.totals.focus.cycles_completed if compare_data.totals else 0 %}
+      {% set comp_avg_m = (compare_data.analysis.avg_minutes | round(1)) if (compare_data.analysis is defined and compare_data.analysis) else 0 %}
+      {% set comp_std_dev = (compare_data.analysis.std_dev | round(1)) if (compare_data.analysis is defined and compare_data.analysis) else 0 %}
+      {% set comp_ideal_c = compare_data.analysis.ideal_count if (compare_data.analysis is defined and compare_data.analysis) else 0 %}
+    {% endif %}
+    <div class="raw-grid raw-grid-2">
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label" style="font-weight: 700; font-size: 11.5px; color: var(--primary); letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 12px;">DESEMPENHO DO PERÍODO</div>
+          {% set focus_minutes = current_data.totals.focus.minutes_completed %}
+          {% set focus_cycles = current_data.totals.focus.cycles_completed %}
+          <div class="kv-row"><span class="kv-k">Minutos focados</span><span class="kv-v">{{ (focus_minutes // 60) }}h{{ '%02d' % (focus_minutes % 60) }}{{ render_pct_delta(comp_focus_m, focus_minutes) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Ciclos completos</span><span class="kv-v">{{ focus_cycles }} ciclos{{ render_pct_delta(comp_focus_c, focus_cycles) if compare_data else '' }}</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label" style="font-weight: 700; font-size: 11.5px; color: var(--primary); letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 12px;">MÉDIA DIÁRIA</div>
+          {% set avg_m = current_data.analysis.avg_minutes | round(1) %}
+          <div class="kv-row"><span class="kv-k">Foco médio</span><span class="kv-v">{{ avg_m }} min/dia{{ render_pct_delta(comp_avg_m, avg_m) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Dias no período</span><span class="kv-v">{{ current_data.analysis.total_days }} dias</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="kv-group">
+          <div class="kv-group-label" style="font-weight: 700; font-size: 11.5px; color: var(--primary); letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 12px;">CONSISTÊNCIA</div>
+          {% set std_dev = current_data.analysis.std_dev | round(1) %}
+          <div class="kv-row"><span class="kv-k">Desvio Padrão</span><span class="kv-v">{{ std_dev }} min{{ render_pct_delta(comp_std_dev, std_dev) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Métrica</span><span class="kv-v muted">Menor desvio = maior constância</span></div>
+        </div>
+        <div class="kv-group">
+          <div class="kv-group-label" style="font-weight: 700; font-size: 11.5px; color: var(--primary); letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 12px;">METAS IDEAIS</div>
+          {% set ideal_c = current_data.analysis.ideal_count %}
+          <div class="kv-row"><span class="kv-k">Atingidas</span><span class="kv-v">{{ ideal_c }} / {{ current_data.analysis.total_days }} dias{{ render_pct_delta(comp_ideal_c, ideal_c) if compare_data else '' }}</span></div>
+          <div class="kv-row"><span class="kv-k">Mapeamento</span><span class="kv-v muted">Dias com meta ideal concluída</span></div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endif %}
+{% endmacro %}
+
+{% macro render_global_analysis_dashboard(global_analysis) %}
+    <div class="kv-group-label" style="font-weight: 700; font-size: 13px; color: var(--primary); letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 16px; margin-top: 32px;">DESTAQUES HISTÓRICOS</div>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="label">Melhor Dia</div>
+        {% if global_analysis.best_day %}
+          <div class="value num" style="font-size: 28px;">{{ (global_analysis.best_day.minutes // 60) }}h{{ '%02d' % (global_analysis.best_day.minutes % 60) }}</div>
+          <div class="delta flat">{{ global_analysis.best_day.cycles }} ciclos · {{ global_analysis.best_day.date_str }}</div>
+          {% if global_analysis.best_day.start_time %}
+            <div class="delta flat" style="font-size: 11px; margin-top: 2px;">Início: {{ global_analysis.best_day.start_time }}</div>
+          {% endif %}
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem dados</div>
+        {% endif %}
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Dia Extraordinário</div>
+        {% if global_analysis.extraordinary_day %}
+          <div class="value num" style="font-size: 28px; color: var(--extra);">+{{ global_analysis.extraordinary_day.cycles }}</div>
+          <div class="delta flat">{{ (global_analysis.extraordinary_day.minutes // 60) }}h{{ '%02d' % (global_analysis.extraordinary_day.minutes % 60) }} focado</div>
+          <div class="delta flat" style="font-size: 11px; margin-top: 2px;">{{ global_analysis.extraordinary_day.date_str }}</div>
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem dados</div>
+        {% endif %}
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Melhor Semana</div>
+        {% if global_analysis.best_week %}
+          <div class="value num" style="font-size: 28px;">{{ (global_analysis.best_week.minutes // 60) }}h{{ '%02d' % (global_analysis.best_week.minutes % 60) }}</div>
+          <div class="delta flat">{{ global_analysis.best_week.cycles }} ciclos</div>
+          <div class="delta flat" style="font-size: 10px; margin-top: 2px;">{{ global_analysis.best_week.label }}</div>
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem dados</div>
+        {% endif %}
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Melhor Mês</div>
+        {% if global_analysis.best_month %}
+          <div class="value num" style="font-size: 28px;">{{ (global_analysis.best_month.minutes // 60) }}h{{ '%02d' % (global_analysis.best_month.minutes % 60) }}</div>
+          <div class="delta flat">{{ global_analysis.best_month.cycles }} ciclos</div>
+          <div class="delta flat" style="font-size: 10px; margin-top: 2px;">{{ global_analysis.best_month.label }}</div>
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem dados</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="kv-group-label" style="font-weight: 700; font-size: 13px; color: var(--primary); letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 16px; margin-top: 32px;">CONSISTÊNCIA HISTÓRICA</div>
+    <div class="stat-grid" style="grid-template-columns: repeat(2, 1fr);">
+      <div class="stat-card">
+        <div class="label">Semana Mais Consistente</div>
+        {% if global_analysis.consistent_week %}
+          <div class="value num" style="font-size: 28px;">Desvio: {{ global_analysis.consistent_week.std_dev | round(1) }} min</div>
+          <div class="delta flat">Média diária: {{ (global_analysis.consistent_week.avg) | round(1) }} min/dia</div>
+          <div class="delta flat" style="font-size: 11px; margin-top: 2px;">Período: {{ global_analysis.consistent_week.label }}</div>
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem dados</div>
+        {% endif %}
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Mês Mais Consistente</div>
+        {% if global_analysis.consistent_month %}
+          <div class="value num" style="font-size: 28px;">Desvio: {{ global_analysis.consistent_month.std_dev | round(1) }} min</div>
+          <div class="delta flat">Média diária: {{ (global_analysis.consistent_month.avg) | round(1) }} min/dia</div>
+          <div class="delta flat" style="font-size: 11px; margin-top: 2px;">Período: {{ global_analysis.consistent_month.label }}</div>
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem dados</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="kv-group-label" style="font-weight: 700; font-size: 13px; color: var(--primary); letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 16px; margin-top: 32px;">METAS HISTÓRICAS</div>
+    <div class="stat-grid" style="grid-template-columns: repeat(2, 1fr);">
+      <div class="stat-card">
+        <div class="label">Semana Ideal (Maior cumprimento)</div>
+        {% if global_analysis.ideal_week %}
+          <div class="value num" style="font-size: 28px;">{{ global_analysis.ideal_week.count }} / {{ global_analysis.ideal_week.total }} dias</div>
+          <div class="delta flat">Atingiram a meta ideal vigente</div>
+          <div class="delta flat" style="font-size: 11px; margin-top: 2px;">Período: {{ global_analysis.ideal_week.label }}</div>
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem dados</div>
+        {% endif %}
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Mês Ideal (Maior cumprimento)</div>
+        {% if global_analysis.ideal_month %}
+          <div class="value num" style="font-size: 28px;">{{ global_analysis.ideal_month.count }} / {{ global_analysis.ideal_month.total }} dias</div>
+          <div class="delta flat">Atingiram a meta ideal vigente</div>
+          <div class="delta flat" style="font-size: 11px; margin-top: 2px;">Período: {{ global_analysis.ideal_month.label }}</div>
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem dados</div>
+        {% endif %}
+      </div>
+    </div>
+{% endmacro %}
+
+{% macro render_global_streaks_dashboard(global_analysis) %}
+    <div class="kv-group-label" style="font-weight: 700; font-size: 13px; color: var(--primary); letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 16px; margin-top: 32px;">SEQUÊNCIAS (STREAKS)</div>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="label">Sequências Atuais</div>
+        <div class="kv-row" style="font-size: 12px; margin-bottom: 4px;">
+          <span class="kv-k">Dias Ativos</span>
+          <span class="kv-v num" style="font-size: 14px;">{{ global_analysis.streaks.current_active }} dias</span>
+        </div>
+        <div class="kv-row" style="font-size: 12px; margin-bottom: 4px;">
+          <span class="kv-k">Meta Média</span>
+          <span class="kv-v num" style="font-size: 14px;">{{ global_analysis.streaks.current_minimum }} dias</span>
+        </div>
+        <div class="kv-row" style="font-size: 12px;">
+          <span class="kv-k">Meta Ideal</span>
+          <span class="kv-v num" style="font-size: 14px;">{{ global_analysis.streaks.current_ideal }} dias</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Melhor Seq. Dias Ativos</div>
+        {% if global_analysis.streaks.best_active.length >= 2 %}
+          <div class="value num" style="font-size: 28px;">{{ global_analysis.streaks.best_active.length }} dias</div>
+          <div class="delta flat">{{ global_analysis.streaks.best_active.start }} a {{ global_analysis.streaks.best_active.end }}</div>
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem sequências >= 2 dias</div>
+        {% endif %}
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Melhor Seq. Meta Média</div>
+        {% if global_analysis.streaks.best_minimum.length >= 2 %}
+          <div class="value num" style="font-size: 28px;">{{ global_analysis.streaks.best_minimum.length }} dias</div>
+          <div class="delta flat">{{ global_analysis.streaks.best_minimum.start }} a {{ global_analysis.streaks.best_minimum.end }}</div>
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem sequências >= 2 dias</div>
+        {% endif %}
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Melhor Seq. Meta Ideal</div>
+        {% if global_analysis.streaks.best_ideal.length >= 2 %}
+          <div class="value num" style="font-size: 28px;">{{ global_analysis.streaks.best_ideal.length }} dias</div>
+          <div class="delta flat">{{ global_analysis.streaks.best_ideal.start }} a {{ global_analysis.streaks.best_ideal.end }}</div>
+        {% else %}
+          <div class="value num" style="font-size: 28px;">—</div>
+          <div class="delta flat">Sem sequências >= 2 dias</div>
+        {% endif %}
+      </div>
+    </div>
+{% endmacro %}
+
+{% macro render_comparison_table(comparison, period_analysis) %}
+    <div class="kv-group-label" style="font-weight: 700; font-size: 13px; color: var(--primary); letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 16px; margin-top: 32px;">TABELA DE COMPARAÇÃO</div>
+    <div style="background: var(--surface); border: 1px solid var(--border); padding: 16px; margin-bottom: 24px;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border); color: var(--text3); font-size: 11px;">
+            <th style="padding: 8px 4px;">MÉTRICA</th>
+            <th style="padding: 8px 4px;">PERÍODO ANTERIOR (A)</th>
+            <th style="padding: 8px 4px;">PERÍODO ATUAL (B)</th>
+            <th style="padding: 8px 4px; text-align: right;">Δ (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 10px 4px; font-weight: bold; color: var(--text);">Minutos focados</td>
+            <td style="padding: 10px 4px; color: var(--text2);">{{ (comparison.minutes.a // 60) }}h{{ '%02d' % (comparison.minutes.a % 60) }}</td>
+            <td style="padding: 10px 4px; color: var(--text2);">{{ (comparison.minutes.b // 60) }}h{{ '%02d' % (comparison.minutes.b % 60) }}</td>
+            <td style="padding: 10px 4px; text-align: right; font-weight: bold;" class="num">
+              {% if comparison.minutes.pct is not none %}
+                <span class="{{ 'up' if comparison.minutes.pct > 0 else ('down' if comparison.minutes.pct < 0 else 'flat') }}">
+                  {{ '+' if comparison.minutes.pct > 0 }}{{ comparison.minutes.pct }}%
+                </span>
+              {% else %}
+                —
+              {% endif %}
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 10px 4px; font-weight: bold; color: var(--text);">Ciclos concluídos</td>
+            <td style="padding: 10px 4px; color: var(--text2);">{{ comparison.cycles.a }}</td>
+            <td style="padding: 10px 4px; color: var(--text2);">{{ comparison.cycles.b }}</td>
+            <td style="padding: 10px 4px; text-align: right; font-weight: bold;" class="num">
+              {% if comparison.cycles.pct is not none %}
+                <span class="{{ 'up' if comparison.cycles.pct > 0 else ('down' if comparison.cycles.pct < 0 else 'flat') }}">
+                  {{ '+' if comparison.cycles.pct > 0 }}{{ comparison.cycles.pct }}%
+                </span>
+              {% else %}
+                —
+              {% endif %}
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 10px 4px; font-weight: bold; color: var(--text);">Média diária</td>
+            {% set avg_a = comparison.minutes.a / period_analysis.total_days %}
+            {% set avg_b = comparison.minutes.b / period_analysis.total_days %}
+            {% set avg_pct = comparison.minutes.pct %}
+            <td style="padding: 10px 4px; color: var(--text2);">{{ avg_a | round(1) }} min</td>
+            <td style="padding: 10px 4px; color: var(--text2);">{{ avg_b | round(1) }} min</td>
+            <td style="padding: 10px 4px; text-align: right; font-weight: bold;" class="num">
+              {% if avg_pct is not none %}
+                <span class="{{ 'up' if avg_pct > 0 else ('down' if avg_pct < 0 else 'flat') }}">
+                  {{ '+' if avg_pct > 0 }}{{ avg_pct }}%
+                </span>
+              {% else %}
+                —
+              {% endif %}
+            </td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 10px 4px; font-weight: bold; color: var(--text);">Dias ativos</td>
+            <td style="padding: 10px 4px; color: var(--text2);">{{ comparison.active_days.a }}</td>
+            <td style="padding: 10px 4px; color: var(--text2);">{{ comparison.active_days.b }}</td>
+            <td style="padding: 10px 4px; text-align: right; font-weight: bold;" class="num">
+              {% if comparison.active_days.pct is not none %}
+                <span class="{{ 'up' if comparison.active_days.pct > 0 else ('down' if comparison.active_days.pct < 0 else 'flat') }}">
+                  {{ '+' if comparison.active_days.pct > 0 }}{{ comparison.active_days.pct }}%
+                </span>
+              {% else %}
+                —
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 4px; font-weight: bold; color: var(--text);">Extraordinários (Ciclos)</td>
+            <td style="padding: 10px 4px; color: var(--text2);">+{{ comparison.extraordinary.cycles.a }}</td>
+            <td style="padding: 10px 4px; color: var(--text2);">+{{ comparison.extraordinary.cycles.b }}</td>
+            <td style="padding: 10px 4px; text-align: right; font-weight: bold;" class="num">
+              {% if comparison.extraordinary.cycles.pct is not none %}
+                <span class="{{ 'up' if comparison.extraordinary.cycles.pct > 0 else ('down' if comparison.extraordinary.cycles.pct < 0 else 'flat') }}">
+                  {{ '+' if comparison.extraordinary.cycles.pct > 0 }}{{ comparison.extraordinary.cycles.pct }}%
+                </span>
+              {% else %}
+                —
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+{% endmacro %}
+
+<div class="page-title">Estatísticas</div>
+
+<div class="period-nav">
+  <div class="scale-tabs">
+    <a href="{{ url_for('stats.stats', scale='day', date=today, section=section, mode=mode, compare=1 if compare_mode else 0, compare_date=compare_date.isoformat() if compare_date else None, active_slot=active_slot) }}" class="tag {{ 'on' if scale=='day' }}">DIA</a>
+    <a href="{{ url_for('stats.stats', scale='week', date=today, section=section, mode=mode, compare=1 if compare_mode else 0, compare_date=compare_date.isoformat() if compare_date else None, active_slot=active_slot) }}" class="tag {{ 'on' if scale=='week' }}">SEMANA</a>
+    <a href="{{ url_for('stats.stats', scale='month', date=today, section=section, mode=mode, compare=1 if compare_mode else 0, compare_date=compare_date.isoformat() if compare_date else None, active_slot=active_slot) }}" class="tag {{ 'on' if scale=='month' }}">MÊS</a>
+  </div>
+  
+  <div class="period-nav-controls">
+    <!-- EXPLORAR / COMPARAR toggle -->
+    <div class="scale-tabs period-nav-toggle">
+      <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section=section, mode=mode, compare=0) }}" class="tag {{ 'on' if not compare_mode }}">EXPLORAR</a>
+      <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section=section, mode=mode, compare=1, compare_date=compare_date.isoformat() if compare_date else None, active_slot=active_slot) }}" class="tag {{ 'on' if compare_mode }}">COMPARAR</a>
+    </div>
+  </div>
+
+  <div class="walker">
+    <a href="{{ url_for('stats.stats', scale=scale, date=prev_ref, section=section, mode=mode, compare=1 if compare_mode else 0, compare_date=compare_date.isoformat() if compare_date else None, active_slot=active_slot) }}">←</a>
+    <span class="period-label">{{ period_label }}{% if is_current_period %}<span class="badge">ATUAL</span>{% endif %}</span>
+    <a href="{{ url_for('stats.stats', scale=scale, date=next_ref, section=section, mode=mode, compare=1 if compare_mode else 0, compare_date=compare_date.isoformat() if compare_date else None, active_slot=active_slot) }}" class="{{ 'disabled' if next_disabled }}">→</a>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card" data-summary-card="cycles">
+    <div class="label" data-summary-label="cycles">Ciclos</div>
+    <div class="value num" data-summary-value="cycles">{{ summary_comparison.cycles.b }}</div>
+    <div class="compare-line" data-summary-compare="cycles">
+      {% if summary_comparison.cycles.pct is not none %}
+      <span class="pct {{ 'up' if summary_comparison.cycles.pct > 0 else ('down' if summary_comparison.cycles.pct < 0 else 'flat') }}">{{ '+' if summary_comparison.cycles.pct > 0 }}{{ summary_comparison.cycles.pct }}%</span>
+      <span>vs. {{ summary_comparison.cycles.a }} no período anterior</span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="stat-card" data-summary-card="minutes">
+    <div class="label" data-summary-label="minutes">Minutos focados</div>
+    <div class="value num" data-summary-value="minutes">{{ (summary_comparison.minutes.b // 60) }}h{{ '%02d' % (summary_comparison.minutes.b % 60) }}</div>
+    <div class="compare-line" data-summary-compare="minutes">
+      {% if summary_comparison.minutes.pct is not none %}
+      <span class="pct {{ 'up' if summary_comparison.minutes.pct > 0 else ('down' if summary_comparison.minutes.pct < 0 else 'flat') }}">{{ '+' if summary_comparison.minutes.pct > 0 }}{{ summary_comparison.minutes.pct }}%</span>
+      <span>vs. {{ (summary_comparison.minutes.a // 60) }}h{{ '%02d' % (summary_comparison.minutes.a % 60) }} no período anterior</span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="stat-card" data-summary-card="active">
+    <div class="label" data-summary-label="active">{{ 'Sequência ativa' if summary_scale == 'day' else 'Dias ativos' }}</div>
+    <div class="value num" data-summary-value="active">{{ summary_comparison.active_days.b }}</div>
+    {% if summary_scale == 'day' %}
+    <div class="compare-line" data-summary-compare="active" style="color: var(--text3);">
+      {% if summary_comparison.best_streak is defined and summary_comparison.best_streak and summary_comparison.best_streak.length > 0 %}
+        Melhor: {{ summary_comparison.best_streak.length }} dias ({{ summary_comparison.best_streak.start }} a {{ summary_comparison.best_streak.end }})
+      {% else %}
+        Sem recorde
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="compare-line" data-summary-compare="active">
+      {% if summary_comparison.active_days.pct is not none %}
+      <span class="pct {{ 'up' if summary_comparison.active_days.pct > 0 else ('down' if summary_comparison.active_days.pct < 0 else 'flat') }}">{{ '+' if summary_comparison.active_days.pct > 0 }}{{ summary_comparison.active_days.pct }}%</span>
+      <span>vs. {{ summary_comparison.active_days.a }} no período anterior</span>
+      {% endif %}
+    </div>
+    {% endif %}
+    <div class="delta flat" data-summary-delta="active" style="{{ 'display:none;' if summary_scale == 'day' else '' }}">{{ summary_comparison.sessions.b if summary_scale != 'day' else '' }}{% if summary_scale != 'day' %} sessões{% endif %}</div>
+  </div>
+  <div class="stat-card" data-summary-card="extraordinary">
+    <div class="label" data-summary-label="extraordinary">Extraordinários</div>
+    <div class="value num" data-summary-value="extraordinary" style="color:var(--extra);">+{{ summary_comparison.extraordinary.cycles.b }}</div>
+    <div class="compare-line" data-summary-compare="extraordinary">
+      {% if summary_comparison.extraordinary.cycles.pct is not none %}
+      <span class="pct {{ 'up' if summary_comparison.extraordinary.cycles.pct > 0 else ('down' if summary_comparison.extraordinary.cycles.pct < 0 else 'flat') }}">{{ '+' if summary_comparison.extraordinary.cycles.pct > 0 }}{{ summary_comparison.extraordinary.cycles.pct }}%</span>
+      <span>vs. +{{ summary_comparison.extraordinary.cycles.a }} no período anterior</span>
+      {% endif %}
+    </div>
+    <div class="delta flat" data-summary-delta="extraordinary">{{ summary_comparison.extraordinary.minutes.b }} min</div>
+  </div>
+</div>
+
+{# ============================== CALENDÁRIO HISTÓRICO ============================== #}
+<div class="cal-body">
+  <div class="cal-body-head">
+    <div class="kv-group-label" style="margin-bottom:0;">Calendário de Atividade (<a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section=section, mode='minutes' if mode=='cycles' else 'cycles', compare=1 if compare_mode else 0, compare_date=compare_date.isoformat() if compare_date else None, active_slot=active_slot) }}" style="color: inherit; text-decoration: none; cursor: default;">{{ mode | upper }}</a>)</div>
+  </div>
+
+  <div class="cal-container">
+    <!-- Weekday labels -->
+    <div class="cal-week-labels" id="cal-week-labels">
+      <span>SEG</span>
+      <span>TER</span>
+      <span>QUA</span>
+      <span>QUI</span>
+      <span>SEX</span>
+      <span>SAB</span>
+      <span>DOM</span>
+    </div>
+
+    <div style="flex:1; overflow:visible;">
+      <!-- Month labels -->
+      <div class="cal-month-labels" id="cal-month-labels">
+        {% for week in grid %}
+          {% set mlabel = month_labels[loop.index0] %}
+          {% if mlabel %}
+          <span class="cal-month-link cal-month-active"
+                onclick="window.location.href='{{ url_for('stats.stats', scale='month', date=week[0].date, mode=mode, section=section, compare=1 if compare_mode else 0, compare_date=compare_date.isoformat() if compare_date else None, active_slot=active_slot) }}'"
+                title="Ver mês {{ mlabel }}">
+            {{ mlabel }}
+          </span>
+          {% else %}
+          <span class="cal-month-link"></span>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Calendar grid of weeks -->
+      <div class="cal-grid" id="cal-grid">
+        <!-- Hover strips for labels -->
+        <div class="cal-hover-strip-top" id="cal-hover-strip-top"></div>
+        <div class="cal-hover-strip-left" id="cal-hover-strip-left"></div>
+
+        {% for week in grid %}
+          {# Perfect-ideal week: ALL 7 days must have ideal_completed=True #}
+          {% set ideal_week = (week | length == 7) and (week | rejectattr('ideal_completed') | list | length == 0) %}
+          <div class="cal-col {% if week[0].selected and scale == 'week' %}selected{% endif %}">
+            <!-- Cap week selector handle -->
+            <div class="cal-week-handle {% if ideal_week %}cal-week-handle--ideal{% endif %}" 
+                 onclick="window.location.href='{{ url_for('stats.stats', scale='week', date=week[0].date, mode=mode, section=section, compare=1 if compare_mode else 0, compare_date=compare_date.isoformat() if compare_date else None, active_slot=active_slot) }}'"
+                 title="Selecionar semana de {{ week[0].date }}{% if ideal_week %} · Semana ideal completa{% endif %}">
+            </div>
+            
+            {% for day in week %}
+              <!-- URL generation depending on Explorar/Comparar modes -->
+              {% set cell_url = "" %}
+              {% if not compare_mode %}
+                {% set cell_url = url_for('stats.stats', scale=scale, date=day.date, mode=mode, section=section) %}
+              {% else %}
+                {% if active_slot == 'a' %}
+                  {% set cell_url = url_for('stats.stats', scale=scale, date=day.date, compare_date=compare_date.isoformat() if compare_date else None, compare=1, active_slot='b', mode=mode, section=section) %}
+                {% else %}
+                  {% set cell_url = url_for('stats.stats', scale=scale, date=ref_date.isoformat(), compare_date=day.date, compare=1, active_slot='b', mode=mode, section=section) %}
+                {% endif %}
+              {% endif %}
+
+              <div class="cal-cell {% if day.has_session %}l{{ day.level }}{% else %}empty{% endif %} {% if day.extraordinary %}extra{% endif %} {% if day.selected %}selected{% endif %}"
+                   onclick="window.location.href='{{ cell_url }}'"
+                   title="{{ day.date }}: {{ day.cycles }} ciclos, {{ day.minutes }} min {% if day.extraordinary %}(extraordinário){% endif %}"
+                   data-date="{{ day.date }}">
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="cal-legend">
+    <span>Sem atividade</span>
+    <div class="cal-cell empty" style="display:inline-block;vertical-align:middle;margin:0 4px;"></div>
+    <span>Menos</span>
+    <div class="cal-cell l1" style="display:inline-block;vertical-align:middle;margin:0 2px;"></div>
+    <div class="cal-cell l2" style="display:inline-block;vertical-align:middle;margin:0 2px;"></div>
+    <div class="cal-cell l3" style="display:inline-block;vertical-align:middle;margin:0 2px;"></div>
+    <div class="cal-cell l4" style="display:inline-block;vertical-align:middle;margin:0 2px;"></div>
+    <span>Mais</span>
+    <span style="margin-left:16px;"><span style="color:var(--extra);font-weight:bold;outline:2px solid var(--extra);outline-offset:0.5px;padding:0 2px;font-size:7px;margin-right:4px;">◼</span> Borda dourada indica ciclo extraordinário</span>
+  </div>
+</div>
+
+{# ============================== SEÇÃO COMPARAÇÃO / DETALHES ============================== #}
+{% if compare_mode %}
+  <div class="compare-title">MODO COMPARAR</div>
+  <div class="compare-slots">
+    <!-- SLOT A -->
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), compare_date=compare_date.isoformat() if compare_date else None, compare=1, active_slot='a', mode=mode, section=section) }}"
+       class="compare-slot {% if active_slot == 'a' %}active{% endif %}">
+      <div class="compare-slot-label {% if active_slot == 'a' %}active{% endif %}">PERÍODO A {% if active_slot == 'a' %}(SELECIONANDO){% endif %}</div>
+      <div class="compare-slot-val num">{{ period_a_label }}</div>
+    </a>
+    
+    <div class="compare-slots-sep num">×</div>
+
+    <!-- SLOT B -->
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), compare_date=compare_date.isoformat() if compare_date else None, compare=1, active_slot='b', mode=mode, section=section) }}"
+       class="compare-slot {% if active_slot == 'b' %}active{% endif %}">
+      <div class="compare-slot-label {% if active_slot == 'b' %}active{% endif %}">PERÍODO B {% if active_slot == 'b' %}(SELECIONANDO){% endif %}</div>
+      <div class="compare-slot-val num {% if not compare_date %}muted{% endif %}">{{ period_b_label }}</div>
+    </a>
+  </div>
+
+
+
+  <div class="section-tabs">
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), compare_date=compare_date.isoformat() if compare_date else None, compare=1, active_slot=active_slot, section='raw', mode=mode) }}" class="tag {{ 'on' if section=='raw' }}">DADOS BRUTOS</a>
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), compare_date=compare_date.isoformat() if compare_date else None, compare=1, active_slot=active_slot, section='contexts', mode=mode) }}" class="tag {{ 'on' if section=='contexts' }}">CONTEXTOS</a>
+    {% if scale == 'day' %}
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), compare_date=compare_date.isoformat() if compare_date else None, compare=1, active_slot=active_slot, section='timeline', mode=mode) }}" class="tag {{ 'on' if section=='timeline' }}">TIMELINE</a>
+    {% endif %}
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), compare_date=compare_date.isoformat() if compare_date else None, compare=1, active_slot=active_slot, section='todo_water', mode=mode) }}" class="tag {{ 'on' if section=='todo_water' }}">TO-DO &amp; ÁGUA</a>
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), compare_date=compare_date.isoformat() if compare_date else None, compare=1, active_slot=active_slot, section='rewards', mode=mode) }}" class="tag {{ 'on' if section=='rewards' }}">RECOMPENSAS</a>
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), compare_date=compare_date.isoformat() if compare_date else None, compare=1, active_slot=active_slot, section='analysis', mode=mode) }}" class="tag {{ 'on' if section=='analysis' }}">ANÁLISE</a>
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), compare_date=compare_date.isoformat() if compare_date else None, compare=1, active_slot=active_slot, section='streaks', mode=mode) }}" class="tag {{ 'on' if section=='streaks' }}">SEQUÊNCIAS</a>
+  </div>
+
+  {% if not compare_date %}
+    {% if section == 'analysis' and scale == 'day' %}
+      {{ render_global_analysis_dashboard(global_analysis) }}
+    {% elif section == 'streaks' %}
+      {{ render_global_streaks_dashboard(global_analysis) }}
+    {% else %}
+      <p class="empty-note">Selecione o Período B clicando em uma célula ou coluna do calendário para iniciar a comparação.</p>
+    {% endif %}
+  {% else %}
+    {% if section == 'analysis' %}
+      {% if scale == 'day' %}
+        {{ render_global_analysis_dashboard(global_analysis) }}
+      {% else %}
+        <div class="compare-split">
+          <div class="compare-col">
+            <div class="compare-section-title">PERÍODO A ({{ period_a_label }})</div>
+            {{ render_section(period_a_data, scale, section) }}
+          </div>
+          <div class="compare-col">
+            <div class="compare-section-title">PERÍODO B ({{ period_b_label }})</div>
+            {{ render_section(period_b_data, scale, section, compare_data=period_a_data) }}
+          </div>
+        </div>
+        {{ render_comparison_table(comparison, period_analysis) }}
+      {% endif %}
+    {% elif section == 'streaks' %}
+      {{ render_global_streaks_dashboard(global_analysis) }}
+    {% else %}
+      <div class="compare-split">
+        <div class="compare-col">
+          <div class="compare-section-title">PERÍODO A ({{ period_a_label }})</div>
+          {% if scale == 'day' and period_a_data.empty %}
+            <p class="empty-note">Nenhuma atividade registrada neste dia.</p>
+          {% else %}
+            {{ render_section(period_a_data, scale, section) }}
+          {% endif %}
+        </div>
+        <div class="compare-col">
+          <div class="compare-section-title">PERÍODO B ({{ period_b_label }})</div>
+          {% if scale == 'day' and period_b_data.empty %}
+            <p class="empty-note">Nenhuma atividade registrada neste dia.</p>
+          {% else %}
+            {{ render_section(period_b_data, scale, section, compare_data=period_a_data) }}
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+
+{% else %}
+  <!-- MODO EXPLORAR -->
+  <div class="section-tabs">
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='raw', mode=mode) }}" class="tag {{ 'on' if section=='raw' }}">DADOS BRUTOS</a>
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='contexts', mode=mode) }}" class="tag {{ 'on' if section=='contexts' }}">CONTEXTOS</a>
+    {% if scale == 'day' %}
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='timeline', mode=mode) }}" class="tag {{ 'on' if section=='timeline' }}">TIMELINE</a>
+    {% endif %}
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='todo_water', mode=mode) }}" class="tag {{ 'on' if section=='todo_water' }}">TO-DO &amp; ÁGUA</a>
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='rewards', mode=mode) }}" class="tag {{ 'on' if section=='rewards' }}">RECOMPENSAS</a>
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='analysis', mode=mode) }}" class="tag {{ 'on' if section=='analysis' }}">ANÁLISE</a>
+    <a href="{{ url_for('stats.stats', scale=scale, date=ref_date.isoformat(), section='streaks', mode=mode) }}" class="tag {{ 'on' if section=='streaks' }}">SEQUÊNCIAS</a>
+  </div>
+
+  {% if section == 'analysis' %}
+    {% if scale == 'day' %}
+      {{ render_global_analysis_dashboard(global_analysis) }}
+    {% else %}
+      {{ render_section(current, scale, section) }}
+      {{ render_comparison_table(comparison, period_analysis) }}
+    {% endif %}
+  {% elif section == 'streaks' %}
+    {{ render_global_streaks_dashboard(global_analysis) }}
+  {% else %}
+    {% if scale == 'day' and current.empty %}
+      <p class="empty-note">Nenhuma atividade registrada neste dia.</p>
+    {% else %}
+      {{ render_section(current, scale, section) }}
+    {% endif %}
+  {% endif %}
+{% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.STATS_SUMMARY_DATA = {{ summary_data | tojson }};
+  window.STATS_SUMMARY_COMPARISONS = {{ summary_comparisons | tojson }};
+  window.STATS_SUMMARY_SCALE = {{ summary_scale | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/stats-calendar.js') }}"></script>
+{% endblock %}

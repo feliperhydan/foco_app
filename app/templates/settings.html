@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="settings-wrap">
+  <div class="page-title" style="text-align:center;">Configurações</div>
+
+  <div class="section-label" style="text-align:center;margin-bottom:24px;">Parâmetros</div>
+  <form method="post" action="{{ url_for('settings.update_settings') }}" style="margin-bottom: 40px;">
+    
+    <div class="settings-group">
+      <div class="settings-group-title">Ciclos</div>
+      <div class="settings-fields-grid">
+        <div class="field">
+          <label>Foco (min)</label>
+          <input type="number" name="focus_minutes" value="{{ cfg.focus_minutes }}">
+        </div>
+        <div class="field">
+          <label>Pausa curta (min)</label>
+          <input type="number" name="short_break_minutes" value="{{ cfg.short_break_minutes }}">
+        </div>
+        <div class="field">
+          <label>Pausa longa (min)</label>
+          <input type="number" name="long_break_minutes" value="{{ cfg.long_break_minutes }}">
+        </div>
+        <div class="field">
+          <label>Ciclos por sessão</label>
+          <input type="number" name="cycles_per_session" value="{{ cfg.cycles_per_session }}">
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Metas</div>
+      <div class="settings-fields-grid">
+        <div class="field">
+          <label>Meta diária média</label>
+          <input type="number" name="daily_minimum_goal" value="{{ cfg.daily_minimum_goal }}">
+        </div>
+        <div class="field">
+          <label>Meta diária ideal</label>
+          <input type="number" name="daily_ideal_goal" value="{{ cfg.daily_ideal_goal }}">
+        </div>
+        <div class="field">
+          <label>Meta semanal</label>
+          <input type="number" name="weekly_goal" value="{{ cfg.weekly_goal }}">
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Hidratação</div>
+      <div class="settings-fields-grid">
+        <div class="field">
+          <label>Garrafa (mL)</label>
+          <input type="number" name="water_bottle_ml" value="{{ cfg.water_bottle_ml }}">
+        </div>
+        <div class="field">
+          <label>Meta de hidratação (mL)</label>
+          <input type="number" name="water_goal_ml" value="{{ cfg.water_goal_ml }}">
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Som</div>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+
+        <div class="volume-row">
+          <div class="volume-info">
+            <span class="volume-title">Volume do Sistema</span>
+            <span class="volume-desc">Sons de interação dos botões (iniciar, pausar, garrafa de água, lista de tarefas).</span>
+          </div>
+          <div class="volume-control">
+            <input type="range" name="volume_system" min="0" max="100" value="{{ cfg.volume_system if cfg.volume_system is defined else 100 }}" class="volume-slider" oninput="this.nextElementSibling.textContent = this.value + '%'">
+            <span class="volume-value">{{ cfg.volume_system if cfg.volume_system is defined else 100 }}%</span>
+          </div>
+        </div>
+
+        <div class="volume-row">
+          <div class="volume-info">
+            <span class="volume-title">Ding de conclusão</span>
+            <span class="volume-desc">Som de fim de foco e conclusão do ciclo.</span>
+          </div>
+          <div class="volume-control">
+            <input type="range" name="volume_focus_end" min="0" max="100" value="{{ cfg.volume_focus_end if cfg.volume_focus_end is defined else 100 }}" class="volume-slider" oninput="this.nextElementSibling.textContent = this.value + '%'">
+            <span class="volume-value">{{ cfg.volume_focus_end if cfg.volume_focus_end is defined else 100 }}%</span>
+          </div>
+        </div>
+
+        <div class="volume-row">
+          <div class="volume-info">
+            <span class="volume-title">Ding de início de ciclo</span>
+            <span class="volume-desc">Som de fim de pausa e alerta de início de um novo ciclo.</span>
+          </div>
+          <div class="volume-control">
+            <input type="range" name="volume_rest_end" min="0" max="100" value="{{ cfg.volume_rest_end if cfg.volume_rest_end is defined else 100 }}" class="volume-slider" oninput="this.nextElementSibling.textContent = this.value + '%'">
+            <span class="volume-value">{{ cfg.volume_rest_end if cfg.volume_rest_end is defined else 100 }}%</span>
+          </div>
+        </div>
+
+        <!-- Painel Expansível: Biblioteca de Sons -->
+        <div class="sound-library-section" style="margin-top: 12px; padding-top: 16px; border-top: 1px dashed var(--border);">
+          <div class="sound-library-toggle" id="sound-library-toggle" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="volume-title" style="margin: 0;">Biblioteca de sons</span>
+              <span style="font-size: 11px; color: var(--text3);">(Personalizar faixas de áudio)</span>
+            </div>
+            <svg viewBox="0 0 24 24" id="sound-library-arrow" class="icon" style="width: 16px; height: 16px; transition: transform 0.2s ease;"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+
+          <div class="sound-library-collapsible" id="sound-library-collapsible" style="display: none; margin-top: 16px;">
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+
+              <!-- 1. Ding de conclusão -->
+              <div class="sound-picker-row">
+                <div class="sound-picker-info">
+                  <span class="sound-picker-title">Ding de conclusão</span>
+                  <span class="sound-picker-desc">Efeito sonoro ao encerrar um ciclo de foco.</span>
+                </div>
+                <div class="sound-picker-actions">
+                  <select name="sound_focus_end" class="sound-select" id="select-sound-focus-end">
+                    <option value="{{ category_sounds.focus_end.default.url }}" {% if cfg.sound_focus_end == category_sounds.focus_end.default.url or not cfg.sound_focus_end %}selected{% endif %}>{{ category_sounds.focus_end.default.name }}</option>
+                    {% if category_sounds.focus_end.custom %}
+                    <optgroup label="Sons personalizados">
+                      {% for s in category_sounds.focus_end.custom %}
+                      <option value="{{ s.url }}" {% if cfg.sound_focus_end == s.url %}selected{% endif %}>{{ s.name }}</option>
+                      {% endfor %}
+                    </optgroup>
+                    {% endif %}
+                  </select>
+                  <button type="button" class="btn small ghost btn-preview-sound" data-target="select-sound-focus-end" title="Testar áudio">▶</button>
+                  <button type="button" class="btn small ghost btn-delete-sound" data-category="focus_end" data-target="select-sound-focus-end" title="Remover faixa personalizada" style="display:none;">✕</button>
+                  <button type="button" class="btn small btn-upload-trigger" data-category="focus_end">Upload</button>
+                </div>
+              </div>
+
+              <!-- 2. Botão de conclusão (btn-conclude) -->
+              <div class="sound-picker-row">
+                <div class="sound-picker-info">
+                  <span class="sound-picker-title">Botão de conclusão</span>
+                  <span class="sound-picker-desc">Efeito sonoro ao clicar no botão "Concluir" do modal pós-ciclo.</span>
+                </div>
+                <div class="sound-picker-actions">
+                  <select name="sound_conclude_btn" class="sound-select" id="select-sound-conclude-btn">
+                    <option value="{{ category_sounds.conclude_btn.default.url }}" {% if cfg.sound_conclude_btn == category_sounds.conclude_btn.default.url or not cfg.sound_conclude_btn %}selected{% endif %}>{{ category_sounds.conclude_btn.default.name }}</option>
+                    {% if category_sounds.conclude_btn.custom %}
+                    <optgroup label="Sons personalizados">
+                      {% for s in category_sounds.conclude_btn.custom %}
+                      <option value="{{ s.url }}" {% if cfg.sound_conclude_btn == s.url %}selected{% endif %}>{{ s.name }}</option>
+                      {% endfor %}
+                    </optgroup>
+                    {% endif %}
+                  </select>
+                  <button type="button" class="btn small ghost btn-preview-sound" data-target="select-sound-conclude-btn" title="Testar áudio">▶</button>
+                  <button type="button" class="btn small ghost btn-delete-sound" data-category="conclude_btn" data-target="select-sound-conclude-btn" title="Remover faixa personalizada" style="display:none;">✕</button>
+                  <button type="button" class="btn small btn-upload-trigger" data-category="conclude_btn">Upload</button>
+                </div>
+              </div>
+
+              <!-- 3. Ding de início de ciclo -->
+              <div class="sound-picker-row">
+                <div class="sound-picker-info">
+                  <span class="sound-picker-title">Ding de início de ciclo</span>
+                  <span class="sound-picker-desc">Efeito sonoro ao terminar a pausa / iniciar um novo ciclo de foco.</span>
+                </div>
+                <div class="sound-picker-actions">
+                  <select name="sound_rest_end" class="sound-select" id="select-sound-rest-end">
+                    <option value="{{ category_sounds.rest_end.default.url }}" {% if cfg.sound_rest_end == category_sounds.rest_end.default.url or not cfg.sound_rest_end %}selected{% endif %}>{{ category_sounds.rest_end.default.name }}</option>
+                    {% if category_sounds.rest_end.custom %}
+                    <optgroup label="Sons personalizados">
+                      {% for s in category_sounds.rest_end.custom %}
+                      <option value="{{ s.url }}" {% if cfg.sound_rest_end == s.url %}selected{% endif %}>{{ s.name }}</option>
+                      {% endfor %}
+                    </optgroup>
+                    {% endif %}
+                  </select>
+                  <button type="button" class="btn small ghost btn-preview-sound" data-target="select-sound-rest-end" title="Testar áudio">▶</button>
+                  <button type="button" class="btn small ghost btn-delete-sound" data-category="rest_end" data-target="select-sound-rest-end" title="Remover faixa personalizada" style="display:none;">✕</button>
+                  <button type="button" class="btn small btn-upload-trigger" data-category="rest_end">Upload</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Início-automático</div>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+
+        <label class="switch-row">
+          <div class="switch-info">
+            <span class="switch-title">Auto-iniciar ciclos de foco</span>
+            <span class="switch-desc">Inicia o próximo ciclo de foco automaticamente assim que a pausa terminar.</span>
+          </div>
+          <span class="switch-toggle">
+            <input type="checkbox" name="auto_start_focus" value="1" {% if cfg.auto_start_focus %}checked{% endif %}>
+            <span class="switch-slider"></span>
+          </span>
+        </label>
+
+        <label class="switch-row">
+          <div class="switch-info">
+            <span class="switch-title">Auto-iniciar descansos</span>
+            <span class="switch-desc">Inicia o período de descanso automaticamente assim que o ciclo de foco terminar.</span>
+          </div>
+          <span class="switch-toggle">
+            <input type="checkbox" name="auto_start_break" value="1" {% if cfg.auto_start_break %}checked{% endif %}>
+            <span class="switch-slider"></span>
+          </span>
+        </label>
+
+        <label class="switch-row">
+          <div class="switch-info">
+            <span class="switch-title">Mensagens pós-término de ciclo</span>
+            <span class="switch-desc">Desative para ocultar o modal ao fim do ciclo e registrar automaticamente "Mensagem desabilitada #Ciclo X" nas estatísticas.</span>
+          </div>
+          <span class="switch-toggle">
+            <input type="checkbox" name="post_cycle_messages_enabled" value="1" {% if cfg.post_cycle_messages_enabled %}checked{% endif %}>
+            <span class="switch-slider"></span>
+          </span>
+        </label>
+
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-title">Ferramentas</div>
+      <label class="devtools-toggle">
+        <input
+          type="checkbox"
+          name="debug_tools_enabled"
+          value="1"
+          {% if cfg.debug_tools_enabled %}checked{% endif %}
+        >
+        <span class="devtools-toggle-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M5 12l4 4 10-10"/></svg>
+        </span>
+        <span class="devtools-toggle-copy">
+          <span class="devtools-toggle-title">Ferramentas de desenvolvedor</span>
+          <span class="devtools-toggle-desc">Mostra o painel lateral com as ações de debug em todas as telas.</span>
+        </span>
+      </label>
+    </div>
+
+    <button class="btn filled" type="submit" style="margin-top:12px; width: 100%;">SALVAR CONFIGURAÇÃO</button>
+  </form>
+
+  <div class="settings-divider"></div>
+
+  <!-- Backup e Restauração -->
+  <div class="settings-group" style="margin-bottom: 40px;">
+    <div class="settings-group-title">Backup das Informações</div>
+    <p style="font-size: 12px; color: var(--text2); margin-bottom: 16px; line-height: 1.5;">
+      Faça o download completo de todas as informações e registros de estatísticas do site para o seu computador, ou restaure um arquivo salvo no disco rígido.
+    </p>
+
+    {% if backup_msg %}
+    <div class="backup-alert" style="padding: 12px 16px; margin-bottom: 18px; border: 2px solid {{ 'var(--primary)' if backup_ok else 'var(--alert)' }}; background: var(--surface2); color: {{ 'var(--primary)' if backup_ok else 'var(--alert)' }}; font-size: 13px; font-weight: 500;">
+      {{ backup_msg }}
+    </div>
+    {% endif %}
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <!-- Exportar -->
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px; border: 1px solid var(--border); background: var(--surface);">
+        <div>
+          <div style="font-weight: 600; font-size: 13px;">Baixar Backup Completo</div>
+          <div style="font-size: 11px; color: var(--text3); margin-top: 3px;">Exporta todos os relatórios, ciclos, dados e configurações em um arquivo JSON.</div>
+        </div>
+        <a href="{{ url_for('settings.download_backup') }}" class="btn filled small" style="flex-shrink: 0; text-decoration: none;">DOWNLOAD</a>
+      </div>
+
+      <!-- Importar -->
+      <form method="post" action="{{ url_for('settings.restore_backup') }}" enctype="multipart/form-data" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px; border: 1px solid var(--border); background: var(--surface);">
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 13px; margin-bottom: 4px;">Restaurar Backup do Disco</div>
+          <input type="file" name="backup_file" accept=".json" required style="font-size: 11px; color: var(--text);">
+        </div>
+        <button class="btn small" type="submit" onclick="return confirm('ATENÇÃO: A restauração substituirá todas as informações atuais pelos dados do arquivo. Deseja continuar?')" style="flex-shrink: 0;">RESTAURAR</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="settings-divider"></div>
+
+  <!-- Histórico de configuração -->
+  <div class="settings-history-section" style="margin-bottom: 40px;">
+    <div class="history-toggle" id="history-toggle" style="cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom: 16px;">
+      <span class="section-label" style="margin:0;">Histórico de configuração</span>
+      <svg viewBox="0 0 24 24" id="history-arrow" class="icon" style="width:16px; height:16px; transition: transform 0.2s ease;"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+
+    <div class="history-current-context" style="display: flex; justify-content: center;">
+      {% for c in history %}
+        {% if c.valid_to is none %}
+        <div class="history-entry current" style="margin-bottom:0; text-align:center;">
+          <div class="range">Vigente desde {{ c.valid_from.strftime('%d/%m') }}</div>
+          <div class="desc">Foco {{ c.focus_minutes }} min · Meta ideal {{ c.daily_ideal_goal }} ciclos</div>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="history-collapsible" id="history-collapsible" style="display:none; margin-top:20px;">
+      {% for c in history %}
+        {% if c.valid_to is not none %}
+        <div class="history-entry" style="text-align:center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+          <div class="range">{{ c.valid_from.strftime('%d/%m') }} — {{ c.valid_to.strftime('%d/%m') }}</div>
+          <div class="desc">Foco {{ c.focus_minutes }} min · Meta ideal {{ c.daily_ideal_goal }} ciclos</div>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+
+
+<!-- Form Oculto para Upload de Áudio Personalizado -->
+<form id="sound-upload-form" method="post" action="{{ url_for('settings.upload_sound') }}" enctype="multipart/form-data" style="display: none;">
+  <input type="file" name="audio_file" id="sound-upload-input" accept=".mp3,.wav,.ogg,.m4a,.aac">
+  <input type="hidden" name="sound_category" id="sound-upload-category" value="">
+</form>
+
+<!-- Form Oculto para Deletar Áudio Personalizado -->
+<form id="sound-delete-form" method="post" action="{{ url_for('settings.delete_sound') }}" style="display: none;">
+  <input type="hidden" name="sound_category" id="sound-delete-category" value="">
+  <input type="hidden" name="sound_url" id="sound-delete-url" value="">
+</form>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // ── Collapsible Histórico ─────────────────────────────────────
+    const toggle = document.getElementById("history-toggle");
+    const collapsible = document.getElementById("history-collapsible");
+    const arrow = document.getElementById("history-arrow");
+    if (toggle && collapsible && arrow) {
+      toggle.addEventListener("click", function() {
+        const isOpen = collapsible.style.display === "block";
+        collapsible.style.display = isOpen ? "none" : "block";
+        arrow.style.transform = isOpen ? "rotate(0deg)" : "rotate(180deg)";
+      });
+    }
+
+    // ── Collapsible Biblioteca de Sons ───────────────────────────
+    const soundToggle = document.getElementById("sound-library-toggle");
+    const soundCollapsible = document.getElementById("sound-library-collapsible");
+    const soundArrow = document.getElementById("sound-library-arrow");
+    if (soundToggle && soundCollapsible && soundArrow) {
+      soundToggle.addEventListener("click", function() {
+        const isOpen = soundCollapsible.style.display === "block";
+        soundCollapsible.style.display = isOpen ? "none" : "block";
+        soundArrow.style.transform = isOpen ? "rotate(0deg)" : "rotate(180deg)";
+      });
+    }
+
+    // ── Gatilho de Upload de Som ─────────────────────────────────
+    const uploadForm = document.getElementById("sound-upload-form");
+    const uploadInput = document.getElementById("sound-upload-input");
+    const uploadCategory = document.getElementById("sound-upload-category");
+
+    document.querySelectorAll(".btn-upload-trigger").forEach(function(btn) {
+      btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        const cat = btn.getAttribute("data-category");
+        if (uploadCategory && uploadInput) {
+          uploadCategory.value = cat;
+          uploadInput.click();
+        }
+      });
+    });
+
+    if (uploadInput) {
+      uploadInput.addEventListener("change", function() {
+        if (uploadInput.files && uploadInput.files.length > 0) {
+          uploadForm.submit();
+        }
+      });
+    }
+
+    // ── Player de Teste de Áudio (Preview) ───────────────────────
+    let currentPreviewAudio = null;
+    document.querySelectorAll(".btn-preview-sound").forEach(function(btn) {
+      btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        const targetId = btn.getAttribute("data-target");
+        const select = document.getElementById(targetId);
+        if (!select || !select.value) return;
+
+        if (currentPreviewAudio) {
+          currentPreviewAudio.pause();
+          currentPreviewAudio = null;
+        }
+
+        const soundUrl = select.value;
+        const snd = new Audio(soundUrl);
+        currentPreviewAudio = snd;
+        btn.textContent = "🔊";
+        snd.play().catch(function(err) { console.warn("Erro ao testar áudio:", err); });
+        snd.onended = function() {
+          btn.textContent = "▶";
+          currentPreviewAudio = null;
+        };
+      });
+    });
+
+    // ── Botão × Deletar Som Personalizado ────────────────────────
+    const deleteForm     = document.getElementById("sound-delete-form");
+    const deleteCatInput = document.getElementById("sound-delete-category");
+    const deleteUrlInput = document.getElementById("sound-delete-url");
+
+    function isCustomOption(selectEl) {
+      const selected = selectEl.options[selectEl.selectedIndex];
+      return selected && selected.parentElement.tagName === "OPTGROUP";
+    }
+
+    function refreshDeleteBtn(selectEl) {
+      const cat = selectEl.getAttribute("data-delete-category");
+      if (!cat) return;
+      const deleteBtn = document.querySelector(`.btn-delete-sound[data-category="${cat}"]`);
+      if (deleteBtn) {
+        deleteBtn.style.display = isCustomOption(selectEl) ? "" : "none";
+      }
+    }
+
+    // Inicializa: associa cada select ao seu data-delete-category e verifica estado inicial
+    document.querySelectorAll(".sound-select").forEach(function(sel) {
+      // descobre a categoria pelo name do select (sound_focus_end → focus_end)
+      const nameParts = sel.name.replace("sound_", "");
+      sel.setAttribute("data-delete-category", nameParts);
+      refreshDeleteBtn(sel);
+
+      sel.addEventListener("change", function() {
+        refreshDeleteBtn(sel);
+      });
+    });
+
+    document.querySelectorAll(".btn-delete-sound").forEach(function(btn) {
+      btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        const targetId = btn.getAttribute("data-target");
+        const selectEl = document.getElementById(targetId);
+        if (!selectEl || !isCustomOption(selectEl)) return;
+
+        const soundUrl = selectEl.value;
+        const soundName = selectEl.options[selectEl.selectedIndex].text;
+
+        if (!confirm(`Remover a faixa "${soundName}" permanentemente?`)) return;
+
+        deleteCatInput.value = btn.getAttribute("data-category");
+        deleteUrlInput.value = soundUrl;
+        deleteForm.submit();
+      });
+    });
+
+  });
+</script>
+{% endblock %}

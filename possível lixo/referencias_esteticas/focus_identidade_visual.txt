@@ -1,0 +1,801 @@
+--- PAGE 1 ---
+F O C U S
+I D E N T I D A D E V I S U A L — V 1
+Cada ciclo conta.
+Cada minuto
+permanece.
+01 / 29
+I N S T R U M E N T O P E S S O A L D E F O C O
+Documento de direção de arte e design system — apresentação de
+conceito visual, tipografia, cor, componentes e telas de referência para
+transformar tempo de foco em progresso visível.
+
+--- PAGE 2 ---
+01
+0 1 — FUN D AME N T O
+Conceito visual
+F O C U S
+/ I D. VI SU AL
+O FOCUS não é um cronômetro, uma lista de tarefas ou um habit
+tracker. É um instrumento pessoal de mensuração de esforço —
+algo que o usuário consulta, não algo que grita por atenção.
+A identidade visual precisa expressar essa condição de instrumento:
+precisa, silenciosa, honesta com os números, e disposta a sumir de cena
+para que o foco aconteça. Ela não compete com o trabalho do usuário —
+ela registra esse trabalho.
+IN S T RUMEN T O
+N ÃO É JOGO
+N ÃO É DAS HBOARD
+O QUE S US T EN T A A EX PER I ÊN CI A
+734 → 735
+O prazer central do produto é simples: ver o número
+crescer. A identidade visual existe para tornar esse instante
+— a virada de um número — o mais bonito e legível possível,
+sem depender de efeitos, confetes ou badges.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+01 / 29
+
+--- PAGE 3 ---
+02
+0 2 — D I R E T R I Z E S
+Princípios da identidade
+F O C U S
+/ I D. VI SU AL
+01
+Minimalismo
+Se um elemento pode ser removido sem prejudicar a
+compreensão imediata, ele é removido da
+visualização padrão.
+02
+Precisão
+O sistema é estatisticamente rigoroso por baixo —
+mas essa precisão é descoberta, não imposta.
+03
+Geometria
+Formas quadradas e retangulares. A nostalgia da
+internet antiga vive na estrutura, nunca no
+ornamento.
+04
+Sobriedade
+Paleta restrita, cores sólidas, sem gradientes, sem
+brilho, sem efeitos futuristas.
+05
+Números como protagonistas
+A tipografia numérica é o elemento com maior
+personalidade de toda a identidade.
+06
+Espaço como hierarquia
+Grupos de informação se separam por espaço
+vertical — não por cards, bordas ou sombras.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+02 / 29
+
+--- PAGE 4 ---
+03
+0 3 — R E FE R ÊN C I AS
+Moodboard conceitual
+F O C U S
+/ I D. VI SU AL
+Nenhuma dessas referências deve ser copiada literalmente. Elas indicam uma direção de sensação: objetos de medição, grades
+rígidas e registros — nunca telas de jogos, paineis financeiros ou apps de bem-estar genéricos.
+IN S T R UMEN T O
+Régua, cronômetro mecânico, caderno de registro —
+objetos que medem sem decorar.
+GR ID DE JOR N AL
+Colunas retas, hierarquia por tamanho de tipo, não por
+cor.
+PAPEL MIL IMET R ADO
+Malha discreta, precisão silenciosa, nenhuma
+ornamentação.
+PAIN EL DE CON T R OL E AN AL ÓGICO
+Poucos controles, cada um com uma função clara —
+nunca decorativo.
+T ER MIN AL S EM ES T ÉT ICA R ET R Ô
+A grade rígida do terminal antigo, sem scanlines, sem
+verde neon, sem fonte bitmap.
+S EL O DE COR R EIO / CAR IMBO
+Retângulos finos, numeração serial, sensação de
+registro oficial de algo real.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+03 / 29
+
+--- PAGE 5 ---
+04
+0 4 — FO R MA
+Direção geométrica
+F O C U S
+/ I D. VI SU AL
+A REG RA
+Formas retangulares e quadradas. Ângulos retos. Raio de canto
+quase inexistente (0–3px). A organização acontece por posição,
+alinhamento e espaçamento — não por cards flutuantes, sombras
+ou bordas arredondadas.
+"A nostalgia está na geometria, não na tipografia." A referência à
+internet antiga aparece como rigidez estrutural — nunca como pixel
+art, CRT ou fonte bitmap.
+RAIO PADRÃO: 0–3PX  ·  BORDA: 1PX  ·  SEM SOMBRA  ·  SEM GRADIENTE
+EVI T AR
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+04 / 29
+
+--- PAGE 6 ---
+05
+0 5 — T I P O G R AFI A
+Tipografia de interface
+F O C U S
+/ I D. VI SU AL
+Poppins
+Geométrica, neutra e extremamente legível em tamanhos
+pequenos — ideal para títulos, labels, menus, descrições e
+configurações. Usada quase sempre em Light (300) ou Regular
+(400), reservando Medium (500) apenas para pequenos
+destaques e estados ativos.
+Light 300
+Corpo / legendas
+Regular 400
+Texto padrão
+Medium 500
+Labels / estados
+AMOSTRA DE CARACTERES
+ABCDEFGHIJKLM
+NOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyz
+0123456789
+EM USO
+PR O G R ES S O DI ÁR I O I DEAL
+Configuração vigente desde 11/08
+INIC IA R
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+05 / 29
+
+--- PAGE 7 ---
+06
+0 6 — T I P O G R AFI A N UMÉR I C A
+Exploração tipográfica dos números
+F O C U S
+/ I D. VI SU AL
+Três direções testadas lado a lado, no papel dos números que o usuário mais vai olhar: contagem de ciclos e cronômetro. O
+critério é o mesmo em todas: elegância, legibilidade em tamanho grande, e nenhuma associação com estética
+digital/esportiva/gamer.
+A · S AN S GEN ÉR I CA (L I BER AT I ON S AN S )
+1234567890
+Neutra e funcional, mas sem personalidade —
+parece planilha, não instrumento. Os
+algarismos não têm nenhuma singularidade a
+mais de olhar.
+DES CART ADA
+B · S ER I F CL ÁS S I CA (T EX GYR E T ER MES )
+1234567890
+Elegante, mas pesada demais e com peso
+editorial/jurídico — remete a documento formal,
+não a um instrumento pessoal
+contemporâneo.
+DES CART ADA
+C · S ER I F CON T EMPOR ÂN EA (L OR A)
+1234567890
+Contraste moderado, curvas contemporâneas,
+algarismos alinhados (lining) e tabulares —
+cresce com elegância em tamanho grande
+sem parecer antiga ou pesada.
+RECOMEN DADA
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+06 / 29
+
+--- PAGE 8 ---
+07
+0 7 — T I P O G R AFI A N UMÉR I C A
+Escala e hierarquia numérica
+F O C U S
+/ I D. VI SU AL
+MI CR O · L EGEN DAS DE BAR R A
+8 / 9
+MÉDI O · T OT AI S DE S EMAN A
+37 / 45
+GR AN DE · ACUMUL ADO
+734
+MUI T O GR AN DE · CR ON ÔMET R O
+35:00
+A escala nunca é decorativa: cada salto de tamanho
+corresponde a um salto de importância. O cronômetro é o
+maior elemento numérico da tela apenas enquanto está ativo —
+fora do ciclo de foco, os totais acumulados (ciclos, minutos)
+dividem o protagonismo com ele.
+Todos os números usam algarismos tabulares, para que a
+virada de "8" para "9" não desloque o restante da linha — um
+detalhe pequeno, mas central para o prazer de ver o número
+crescer sem ruído visual.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+07 / 29
+
+--- PAGE 9 ---
+08
+0 8 — C O R
+Paleta de cores
+F O C U S
+/ I D. VI SU AL
+Paleta deliberadamente curta. Cada cor tem uma única função — nenhuma existe apenas por estar bonita. Cores sólidas, sem
+gradiente, sem transparência decorativa.
+#1F5C45
+Verde Focus
+Cor primária — progresso normal, tema do usuário, ação
+principal.
+#B8862E
+Ouro Extraordinário
+Esforço além da meta ideal. Evento, não erro — nunca vermelho
+de alerta.
+#F5F3EE
+Fundo Claro
+Base do tema claro — papel, não branco puro.
+#14161A
+Fundo Escuro
+Base do tema escuro — carvão quente, não preto absoluto.
+#6B6F72
+Texto Secundário
+Legendas, contexto, informação auxiliar.
+#A5473C
+Atenção
+Reservada a estados que realmente exigem cuidado (raro).
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+08 / 29
+
+--- PAGE 10 ---
+09
+0 9 — T E MAS
+Light theme
+F O C U S
+/ I D. VI SU AL
+O tema claro usa um fundo levemente quente (#F5F3EE) —
+nunca branco puro — para lembrar papel, e não tela de
+escritório. Superfícies internas (#FFFFFF) aparecem só onde há
+real necessidade de contraste, como no cronômetro.
+H OJE
+MÍNIMO
+6 / 6
+ID EAL
+8 / 8
+EXT RAO RD INÁRIO
++3
+SE M AN A
+SEMANAL
+31 / 36
+OBJE TI VO — M P3
+ABSO LUT O
+734 / 1000
+35:00
+I N I CI AR
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+09 / 29
+
+--- PAGE 11 ---
+10
+1 0 — T E MAS
+Dark theme
+F O C U S
+/ I D. VI SU AL
+Obrigatório e tratado com o mesmo cuidado do tema claro —
+não é uma inversão automática. O fundo é um carvão quente
+(#14161A), com dois níveis sutis de superfície (#1B1E22 / #22262B)
+para diferenciar camadas sem recorrer a sombras.
+O verde primário fica mais claro e saturado (#4C9E7C) para
+manter contraste sem parecer neon; o ouro extraordinário
+também clareia levemente (#D9AA55).
+H OJE
+MÍNIMO
+6 / 6
+ID EAL
+8 / 8
+EXT RAO RD INÁRIO
++3
+SE M AN A
+SEMANAL
+31 / 36
+OBJE TI VO — M P3
+ABSO LUT O
+734 / 1000
+35:00
+I N I CI AR
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+10 / 29
+
+--- PAGE 12 ---
+11
+1 1 — C O R
+Sistema de cores semânticas
+F O C U S
+/ I D. VI SU AL
+PAPEL
+US O
+Primária (verde)
+Progresso mínimo, ideal, semanal e absoluto. Botão de ação principal.
+Extraordinária
+(ouro)
+Só aparece após concluir a meta ideal do dia. Nunca usada fora desse
+contexto.
+Neutro
+Textos secundários, contexto, legendas, bordas — a maior parte da
+interface.
+Atenção
+Reservada a casos raros de erro real de sistema. Nunca usada para
+pressionar metas.
+Regra de ouro: uma cor nunca aparece "porque ficou bonita".
+Antes de usar uma cor fora do neutro, ela precisa responder a
+uma pergunta: este é progresso normal, ou é esforço além do
+combinado? Se não for nenhum dos dois, o elemento fica em
+neutro.
+NORMAL
+EXCEDENTE
+NEUTRO
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+11 / 29
+
+--- PAGE 13 ---
+12
+1 2 — C O MP O N E N T E S
+Barras de progresso
+F O C U S
+/ I D. VI SU AL
+MÍNIMO
+35 min/ciclo
+6 / 6
+ID EAL
+35 min/ciclo
+8 / 8
+SEMANAL
+desde 2ª-feira
+31 / 36
+O BJET IVO ABSO LUT O — MP3
+734 / 1000
+Barras curtas e grossas — bordas retas de 2px,
+preenchimento segmentado em blocos, sombra sólida
+deslocada. A referência é o rústico da internet antiga: nada de
+traços finos e delicados. O preenchimento crescendo em
+blocos precisa ser fisicamente satisfatório de acompanhar.
+Largura moderada e sempre centralizada — nunca esticada de
+ponta a ponta da tela. O número acompanha cada barra,
+nunca a substitui.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+12 / 29
+
+--- PAGE 14 ---
+13
+1 3 — C O MP O N E N T E S
+Barra extraordinária — oculta até desbloquear
+F O C U S
+/ I D. VI SU AL
+1 · MÍ N I MO E I DEAL EM CUR S O
+MÍNIMO
+6 / 6
+ID EAL
+6 / 8
+Nenhum espaço é reservado para a
+extraordinária. Ela não existe nesta tela — nem
+vazia, nem "bloqueada" visualmente.
+2 · GAT I L HO — AS DUAS FECHAM J UN T AS
+MÍNIMO
+6 / 6
+ID EAL
+8 / 8
+Só quando mínimo e ideal completam é que
+a extraordinária nasce — ela surge como
+evento, empurrando o layout, nunca como
+pop-up.
+3 · DES BL OQUEADA
+MÍNIMO
+6 / 6
+ID EAL
+8 / 8
+EXT RAO RD INÁRIO
++3
+Cor ouro, nunca vermelha de alerta — convite,
+não cobrança.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+13 / 29
+
+--- PAGE 15 ---
+14
+1 4 — C O MP O N E N T E S
+Sistema de contexto
+F O C U S
+/ I D. VI SU AL
+C ONTROLE G LOBAL
+Um ícone discreto na sidebar revela o contexto de tudo que está na tela —
+sem sair dela.
+HOVER PROLONG ADO (~3S)
+8 / 9
+Meta: 9 ciclos · 45 min/ciclo
+Configuração vigente desde 11/08
+"Informação contextual deve ser descoberta, não imposta."
+Nenhum tooltip aparece ao simples passar do mouse — só
+depois de permanência real, evitando chuva de pop-ups
+acidentais.
+O balão de contexto é um retângulo fino, sem sombra, sem seta
+decorativa — apenas texto pequeno alinhado à informação que
+ele explica.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+14 / 29
+
+--- PAGE 16 ---
+15
+1 5 — C O MP O N E N T E S
+Temporizador — estados
+F O C U S
+/ I D. VI SU AL
+I DL E
+35:00
+FOCUS I N G
+24:37
+PAUS ED
+18:12
+BR EAK
+05:00
+L ON G BR EAK
+20:00
+FI N I S HED
+00:00
+Nenhuma estética de relógio digital, nenhuma fonte monoespaçada por padrão, nenhum efeito de neon. O cronômetro é grande e
+sério — um objeto que mede, não um contador de jogo.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+15 / 29
+
+--- PAGE 17 ---
+16
+1 6 — FL UX O
+Conclusão de ciclo
+F O C U S
+/ I D. VI SU AL
+CI CL O CON CL UÍ DO
+O que você fez?
+C O NC LU IR
+"Encha sua garrafa de água."
+O campo de registro nunca é obrigatório — deixar em
+branco e concluir é um caminho válido e rápido. O objetivo é
+remover qualquer fricção entre "terminei" e "está
+contabilizado".
+Depois da conclusão, uma mensagem curta e aleatória de
+cuidado aparece — nunca como alerta, apenas como uma
+linha discreta que desaparece sozinha.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+16 / 29
+
+--- PAGE 18 ---
+17
+1 7 — C O MP O R T AME N T O
+Microinterações
+F O C U S
+/ I D. VI SU AL
+EVEN T O
+R ES POS T A VIS UAL
+Ciclo concluído
+Número incrementa com leve fade — sem confete
+Barra aumenta
+Preenchimento anima em ~250ms, sem bounce
+Extraordinário aparece
+Linha nova surge com leve deslize vertical
+Objetivo completo
+Número final fica estático por 1–2s antes de recolher
+Garrafa registrada
+Preenchimento vertical sobe suavemente
+Toda animação existe para confirmar que algo real
+aconteceu — nunca para entreter. Durações curtas (150–
+300ms), sem elástico, sem partículas, sem som obrigatório.
+Sensação-alvo: precisão e satisfação. Não espetáculo.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+17 / 29
+
+--- PAGE 19 ---
+18
+1 8 — C O MP O N E N T E S
+Sidebar e iconografia
+F O C U S
+/ I D. VI SU AL
+HOME
+ATIVIDADE
+ESTATÍSTICAS
+RECOMPENSAS
+CONFIGURAÇÕES
+ÁGUA
+Sidebar estreita (54px), só ícones, sem rótulos permanentes.
+Traço fino e consistente (1.6px), formas geométricas simples
+— nunca estilo emoji ou 3D.
+O ícone de atividade mostra/oculta o calendário direto na
+Home — ele não é uma página separada.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+18 / 29
+
+--- PAGE 20 ---
+19
+1 9 — T E L AS
+Home — antes / depois do desbloqueio
+F O C U S
+/ I D. VI SU AL
+AN T ES — MÍ N I MO E I DEAL AI N DA N ÃO FECHAR AM OS DOI S
+DEPOI S — EX T R AOR DI N ÁR I O DES BL OQUEADO
+As quatro barras — mínimo, ideal, semanal e absoluto — ficam sempre dispostas no centro da Home, empilhadas e
+grossas. A barra extraordinária é a única que não nasce com as demais: ela permanece ausente até o instante em
+que mínimo e ideal fecham juntos, e então ocupa seu próprio espaço reservado logo abaixo.
+H OJE
+MÍNIMO
+6 / 6
+ID EAL
+8 / 8
+EXTRAORDINÁRIO SURGE AO COMPLETAR MÍNIMO + IDEAL
+SE M AN A
+SEMANAL
+31 / 36
+OBJE TI VO — M P3
+ABSO LUT O
+734 / 1000
+35:00
+I N I CI AR
+H OJE
+MÍNIMO
+6 / 6
+ID EAL
+8 / 8
+EXT RAO RD INÁRIO
++3
+SE M AN A
+SEMANAL
+31 / 36
+OBJE TI VO — M P3
+ABSO LUT O
+734 / 1000
+35:00
+I N I CI AR
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+19 / 29
+
+--- PAGE 21 ---
+20
+2 0 — T E L AS
+Home — dark
+F O C U S
+/ I D. VI SU AL
+H OJE
+MÍNIMO
+6 / 6
+ID EAL
+8 / 8
+EXT RAO RD INÁRIO
++3
+SE M AN A
+SEMANAL
+31 / 36
+OBJE TI VO — M P3
+ABSO LUT O
+734 / 1000
+35:00
+I N I CI AR
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+20 / 29
+
+--- PAGE 22 ---
+21
+2 1 — T E L AS
+Calendário
+F O C U S
+/ I D. VI SU AL
+AGOSTO 2026 — atividade dos últimos meses
+CICLOS
+MIN UT OS
+MENOS
+MAIS
+Inspirado no princípio do GitHub Contribution Graph, não na sua aparência literal. Quadrados
+pequenos, sem bordas arredondadas, cinco níveis de intensidade na cor primária. O switch alterna
+entre "quantos ciclos" e "quanto tempo real" — duas leituras diferentes da mesma consistência.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+21 / 29
+
+--- PAGE 23 ---
+22
+2 2 — T E L AS
+Estatísticas
+F O C U S
+/ I D. VI SU AL
+S EMAN A
+MÊS
+CI CL OS
+38
++18,7% vs. semana anterior
+MI N UT OS FOCADOS
+22h10
++21,4% vs. semana anterior
+DI AS AT I VOS
+6 / 7
+EX T R AOR DI N ÁR I OS
++7
+Ciclos e minutos são sempre reportados lado a lado, nunca um no lugar do outro — uma queda em ciclos pode conviver com um
+aumento em minutos, se a duração do ciclo mudou. O percentual de crescimento acompanha cada métrica individualmente, com
+a configuração vigente disponível por hover, evitando comparações enganosas entre semanas com parâmetros diferentes.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+22 / 29
+
+--- PAGE 24 ---
+23
+2 3 — T E L AS
+Recompensas & wishlist
+F O C U S
+/ I D. VI SU AL
+C ONQUISTADAS
+1 hora de videogame
+18 vezes · última em 11/08
+Praia
+4 vezes · 06/08 → 09/08
+OBJETIVO ABSOLUTO ATIVO
+MP3
+734 / 1000
+WISHLIST
+Fone
+500 ciclos
+MP3
+1000 ciclos — ativo
+Viagem
+2500 ciclos
+Violão
+4000 ciclos
+Sem medalhas douradas, sem troféus 3D. A lista tem tom de agenda pessoal
+— o usuário escolhe quando ativar o próximo objetivo.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+23 / 29
+
+--- PAGE 25 ---
+24
+2 4 — T E L AS
+Configurações & histórico
+F O C U S
+/ I D. VI SU AL
+PAR ÂMET R O
+VAL OR AT UAL
+Foco
+45 min
+Pausa curta
+5 min
+Pausa longa
+20 min
+Ciclos por sessão
+4
+Meta diária ideal
+9 ciclos
+Meta semanal
+45 ciclos
+Tema
+Automático
+HISTÓRIC O DE C ONFIG URAÇ ÃO
+01/08 — 10/08
+Foco 35 min · Meta ideal 8 ciclos
+11/08 — atual
+Foco 45 min · Meta ideal 9 ciclos
+Cada alteração fica registrada com sua data de vigência — a base
+silenciosa que garante que as estatísticas nunca comparem períodos de
+forma enganosa.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+24 / 29
+
+--- PAGE 26 ---
+25
+2 5 — T E L AS
+Água & microintervenções
+F O C U S
+/ I D. VI SU AL
+HOJ E
+2,25 L
+Meta: 3,5 L · garrafa de 750 mL
++1 G A RRA F A
+Registro sempre manual — a água nunca é inferida a
+partir dos ciclos. A meta é tratada como configurável,
+nunca como recomendação médica.
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+25 / 29
+
+--- PAGE 27 ---
+26
+2 6 — S I S T E MA
+Responsividade
+F O C U S
+/ I D. VI SU AL
+HOJ E
+8/8
+35:00
+INIC IA R
+H OJ E
+8/8
+35:00
+I N I C I AR
+DESKTOP
+TABLET
+MOBILE
+A composição centralizada se mantém em toda escala. No mobile, a hierarquia se reduz — não se
+transforma em uma pilha de cards.
+H OJE
+MÍNIMO
+6 / 6
+ID EAL
+8 / 8
+EXTRAORDINÁRIO SURGE AO COMPLETAR MÍNIMO + IDEAL
+SE M AN A
+SEMANAL
+31 / 36
+OBJE TI VO — M P3
+ABSO LUT O
+734 / 1000
+35:00
+I N I CI AR
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+26 / 29
+
+--- PAGE 28 ---
+27
+2 7 — S Í N T E S E
+Design tokens
+F O C U S
+/ I D. VI SU AL
+Cor primária
+#1F5C45 (claro) · #4C9E7C (escuro)
+Cor extraordinária
+#B8862E (claro) · #D9AA55 (escuro)
+Fundo
+#F5F3EE (claro) · #14161A (escuro)
+Tipografia de interface
+Poppins — 300 / 400 / 500
+Tipografia numérica
+Lora — 500 / 600 / 700, algarismos tabulares
+Escala numérica
+20 · 34 · 64 · 104px
+Raio de canto
+0–3px
+Espessura de borda
+1px
+Espaçamento base
+4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96px
+Altura de barra
+6–10px
+Sombra
+nenhuma
+Gradiente
+nenhum
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+27 / 29
+
+--- PAGE 29 ---
+28
+2 8 — S Í N T E S E
+Aplicação final da identidade
+F O C U S
+/ I D. VI SU AL
+ES T AT Í S T I CAS
+38
++18,7%
+R ECOMPEN S AS
+1h de videogame
+18 vezes
+CON FI GUR AÇÕES
+Foco: 45 min
+Meta ideal: 9
+Do login à configuração, a mesma linguagem: números serifados grandes, barras finas, sidebar quieta, espaço
+generoso. Um observador que nunca viu o produto deve reconhecer, em qualquer tela, que pertence ao mesmo
+instrumento.
+H OJE
+MÍNIMO
+6 / 6
+ID EAL
+8 / 8
+EXTRAORDINÁRIO SURGE AO COMPLETAR MÍNIMO + IDEAL
+SE M AN A
+SEMANAL
+31 / 36
+OBJE TI VO — M P3
+ABSO LUT O
+734 / 1000
+35:00
+I N I CI AR
+FOCUS — SISTEMA DE IDENTIDADE VISUAL
+28 / 29
+
+--- PAGE 30 ---
+F O C U S
+2 9 / 2 9
+Ela não precisa gritar para motivar.
+Ela mostra o que aconteceu.
+Esta identidade existe para uma única finalidade: fazer o usuário querer ver o número
+crescer — e confiar que, quando ele crescer, será porque algo real aconteceu.
+PRÓXIMA ETAPA — IMPLEMENTAÇÃO DA INTERFACE
